@@ -21,10 +21,11 @@ function Test(){
   Mediator.Call({ Type: 1, Message: "I am only logged." });
 
   Mediator.Add(FilterMessages, AlertMessage);
+  Mediator.Add(FilterMessages, LogMessage);
   Mediator.Call({ From: "Audrey", Message: "This message shouldn't apear." });
-  Mediator.Call({ From: "Jack", Message: "This message should ony appear once." });
-  Mediator.Remove(FilterMessages);
-  Mediator.Call({ From: "Jack", Message: "This message should only appear once." });
+  Mediator.Call({ From: "Jack", Message: "This message should ony alert once, and be logged twice." });
+  Mediator.Remove(FilterMessages, AlertMessage);
+  Mediator.Call({ From: "Jack", Message: "This message should ony alert once, and be logged twice." });
 }
 
 function AlertMessage(data){
