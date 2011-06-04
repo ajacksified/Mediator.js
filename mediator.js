@@ -1,3 +1,4 @@
+/*-- Mediator --*/
 (function(){
   var Mediator = function(){};
 
@@ -10,16 +11,13 @@
         return;
       }
       
-      if(typeof condition === "number"){
-        if(!this._callbacks[condition]){
-          this._callbacks[condition] = [];
-        }
-
-        this._callbacks[condition].push(fn);
-        return;
+      if(!this._callbacks[condition]){
+        this._callbacks[condition] = [];
       }
 
-      throw("Must be a predicate or response data type integer.");
+      this._callbacks[condition].push(fn);
+      return;
+
     },
 
     Remove: function(condition, fn){
@@ -67,5 +65,5 @@
     }
   }
 
-  window.Mediator = Mediator.prototype;;
+  window.Mediator = Mediator.prototype;
 })(window);
