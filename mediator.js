@@ -29,7 +29,7 @@
       if(this._callbacks.Predicates.length > 0 && typeof condition == "function"){
         var counter = 0;
         for(var x in this._callbacks.Predicates){
-          if(this._callbacks.Predicates[x][0] == condition && (!fn || fn == this._callbacks.Predicates[x])){
+          if(this._callbacks.Predicates[x][0] == condition && (!fn || fn == this._callbacks.Predicates[x][1])){
             this._callbacks.Predicates.splice(counter, 1);
             counter--;
           }
