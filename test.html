@@ -8,36 +8,36 @@
     Testing the Mediator: <button onclick="Test();">Push Buttan</button>
     <script src="mediator.js"></script>
     <script>
-      function Test(){
-        Mediator.Add(0, function(){ alert("Tested adding typed anonymous functions.") });
-        Mediator.Call({Type: 0});
-        Mediator.Remove(0);
-        Mediator.Call({Type: 0});
+function Test(){
+  Mediator.Add(0, function(){ alert("Tested adding typed anonymous functions."); });
+  Mediator.Call({Type: 0});
+  Mediator.Remove(0);
+  Mediator.Call({Type: 0});
 
-        Mediator.Add(1, AlertMessage);
-        Mediator.Add(1, LogMessage);
-        Mediator.Call({ Type: 1, Message: "I am alerted and logged." });
-        Mediator.Remove(1, AlertMessage);
-        Mediator.Call({ Type: 1, Message: "I am only logged." });
+  Mediator.Add(1, AlertMessage);
+  Mediator.Add(1, LogMessage);
+  Mediator.Call({ Type: 1, Message: "I am alerted and logged." });
+  Mediator.Remove(1, AlertMessage);
+  Mediator.Call({ Type: 1, Message: "I am only logged." });
 
-        Mediator.Add(FilterMessages, AlertMessage);
-        Mediator.Call({ From: "Audrey", Message: "This message shouldn't apear." });
-        Mediator.Call({ From: "Jack", Message: "This message should ony appear once." });
-        Mediator.Remove(FilterMessages);
-        Mediator.Call({ From: "Jack", Message: "This message should only appear once." });
-      }
+  Mediator.Add(FilterMessages, AlertMessage);
+  Mediator.Call({ From: "Audrey", Message: "This message shouldn't apear." });
+  Mediator.Call({ From: "Jack", Message: "This message should ony appear once." });
+  Mediator.Remove(FilterMessages);
+  Mediator.Call({ From: "Jack", Message: "This message should only appear once." });
+}
 
-      function AlertMessage(data){
-        alert(data.Message);
-      }
+function AlertMessage(data){
+  alert(data.Message);
+}
 
-      function LogMessage(data){
-        console.log(data.Message);
-      }
+function LogMessage(data){
+  console.log(data.Message);
+}
 
-      function FilterMessages(data){
-        return data.From == "Jack";
-      }
+function FilterMessages(data){
+  return data.From == "Jack";
+}
     </script>
   </body>
 </html>
