@@ -1,4 +1,9 @@
-/*-- Mediator --*/
+/*-- 
+* Mediator.js Library
+* Copyright 2011 Jack Lawson
+* MIT Licensed (http://www.opensource.org/licenses/mit-license.php)
+* For more information: (http://www.thejacklawson.com/index.php/2011/06/mediators-for-modularized-asynchronous-programming-in-javascript/) 
+* --*/
 (function(){
   var Mediator = function(){};
 
