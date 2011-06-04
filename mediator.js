@@ -7,7 +7,6 @@
     Add: function(condition, fn){
       if(typeof condition === "function"){
         this._callbacks.Predicates.push([condition, fn]);
-
         return;
       }
       
@@ -17,7 +16,6 @@
         }
 
         this._callbacks[condition].push(fn);
-
         return;
       }
 
