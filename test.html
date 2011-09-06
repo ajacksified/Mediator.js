@@ -18,23 +18,25 @@ Project on GitHub: https://github.com/ajacksified/Mediator.js
     <script src="mediator.js"></script>
     <script>
       function Test(){
-        Mediator.Add(0, function(){ alert("Tested adding typed anonymous functions."); });
-        Mediator.Call({Type: 0});
-        Mediator.Remove(0);
-        Mediator.Call({Type: 0});
+        var mediator = new Mediator();
 
-        Mediator.Add(1, AlertMessage);
-        Mediator.Add(1, LogMessage);
-        Mediator.Call({ Type: 1, Message: "I am alerted and logged." });
-        Mediator.Remove(1, AlertMessage);
-        Mediator.Call({ Type: 1, Message: "I am only logged." });
+        mediator.Subscribe(0, function(){ alert("Tested adding typed anonymous functions."); });
+        mediator.Publish({Type: 0});
+        mediator.Remove(0);
+        mediator.Publish({Type: 0});
 
-        Mediator.Add(FilterMessages, AlertMessage);
-        Mediator.Add(FilterMessages, LogMessage);
-        Mediator.Call({ From: "Audrey", Message: "This message shouldn't apear." });
-        Mediator.Call({ From: "Jack", Message: "This message should ony alert once, and be logged twice." });
-        Mediator.Remove(FilterMessages, AlertMessage);
-        Mediator.Call({ From: "Jack", Message: "This message should ony alert once, and be logged twice." });
+        mediator.Subscribe(1, AlertMessage);
+        mediator.Subscribe(1, LogMessage);
+        mediator.Publish({ Type: 1, Message: "I am alerted and logged." });
+        mediator.Remove(1, AlertMessage);
+        mediator.Publish({ Type: 1, Message: "I am only logged." });
+
+        mediator.Subscribe(FilterMessages, AlertMessage);
+        mediator.Subscribe(FilterMessages, LogMessage);
+        mediator.Publish({ From: "Audrey", Message: "This message shouldn't apear." });
+        mediator.Publish({ From: "Jack", Message: "This message should ony alert once, and be logged twice." });
+        mediator.Remove(FilterMessages, AlertMessage);
+        mediator.Publish({ From: "Jack", Message: "This message should ony alert once, and be logged twice." });
       }
 
       function AlertMessage(data){

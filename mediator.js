@@ -6,70 +6,90 @@
 * Project on GitHub: https://github.com/ajacksified/Mediator.js
 * --*/
 (function(){
-  var Mediator = function(){};
+  function Mediator() {
+    if (!this instanceof Mediator) {
+      return new Mediator();
+    }else{
+      this._callbacks = { Predicates: [] };
+    }
+  }
 
   Mediator.prototype = {
-    _callbacks: { Predicates: [] },
+    Subscribe: function(channel, fn, context){
+      if(context === undefined){
+        context = window;
+      }
 
-    Add: function(condition, fn){
-      if(typeof condition === "function"){
-        this._callbacks.Predicates.push([condition, fn]);
+      if(typeof channel === "function"){
+        this._callbacks.Predicates.push({ predicate: channel, fn: fn, context: context});
         return;
       }
       
-      if(!this._callbacks[condition]){
-        this._callbacks[condition] = [];
+      if(!this._callbacks[channel]){
+        this._callbacks[channel] = [];
       }
 
-      this._callbacks[condition].push(fn);
+      this._callbacks[channel].push({ fn: fn, context: context });
       return;
 
     },
 
-    Remove: function(condition, fn){
-      if(this._callbacks.Predicates.length > 0 && typeof condition == "function"){
-        var counter = 0;
-        for(var x in this._callbacks.Predicates){
-          if(this._callbacks.Predicates[x][0] == condition && (!fn || fn == this._callbacks.Predicates[x][1])){
-            this._callbacks.Predicates.splice(counter, 1);
-            counter--;
-          }
+    Remove: function(channel, fn){
+      if(this._callbacks.Predicates.length > 0 && typeof channel == "function"){
+        var counter = 0,
+          callback = {};
+        for(var x = 0, l = this._callbacks.Predicates.length; x < l; x++){
+          callback = this._callbacks.Predicates[x];
 
-          counter++;
+          if(callback.predicate == channel && (!fn || fn == callback.fn)){
+            this._callbacks.Predicates.splice(x, 1);
+          }
         }
         
         return;
       }
         
-      if(this._callbacks[condition]){
+      if(this._callbacks[channel]){
         if(!fn){
-          this._callbacks[condition] = [];
+          this._callbacks[channel] = [];
           return;
         }
-
-        for(var y in this._callbacks[condition]) {
-          if(this._callbacks[condition][y] == fn){
-            this._callbacks[condition].splice(y,1);
+        
+        for(var y in this._callbacks[channel]) {
+          if(this._callbacks[channel][y].fn == fn){
+            this._callbacks[channel].splice(y,1);
           }
         }
       } 
     },
     
-    Call: function(data){
-      if(data.Type !== undefined && this._callbacks[data.Type]){
-        for(var x in this._callbacks[data.Type]){
-          this._callbacks[data.Type][x](data);
+    Publish: function(channel){
+      var data = Array.prototype.slice.call(arguments, 1),
+        callback,
+        callbacks;
 
+      if(channel !== undefined && this._callbacks[channel]){
+
+        for(var x in this._callbacks[channel]){
+          callbacks = this._callbacks[channel];
+
+          if(callbacks.hasOwnProperty(x)){
+            var callback = callbacks[x];
+            callback.fn.apply(callback.context, data);
+          }
         }
       } 
       
       for(var y in this._callbacks.Predicates){
-        if(this._callbacks.Predicates[y][0](data)){
-          this._callbacks.Predicates[y][1](data);
+        context = window;
+        callback = this._callbacks.Predicates[y];
+        
+        if(callback.predicate.apply(callback.context, data)){
+          callback.fn.apply(callback.context, data);
         } 
       }
     }
-  }
+  };
 
-  window.Mediator = Mediator.prototype;
+  window.Mediator = Mediator;
 })(window);
