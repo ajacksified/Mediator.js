@@ -1,5 +1,6 @@
 Mediator.js
 ===========
+Version 0.2
 For more information, please see [my blog post](http://www.thejacklawson.com/index.php/2011/06/mediators-for-modularized-asynchronous-programming-in-javascript/)
 
 A light utility class to help implement the Mediator pattern to ease asynchronous programming
