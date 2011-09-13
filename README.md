@@ -84,8 +84,11 @@ As of version 0.4, you can namespace your subscribing / removing / publishing as
 
 Changes from Last Version
 -------------------------
-Predicate no longer acts as a channel and is moved to an options object
+* Predicate no longer acts as a channel and is moved to an options object
 at the end of the subcription call.
+* Signatures changed; context moved to the end of subscriptions
+* Namespacing for subscription binding
+
 
 License
 -------
