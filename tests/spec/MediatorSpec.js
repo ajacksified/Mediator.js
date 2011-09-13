@@ -30,12 +30,14 @@ describe("Mediator", function() {
 
     it("should pass arguments to the given function", function(){
       var spy = jasmine.createSpy("test channel callback with args"),
-          arg = "test";
+          channel = "test",
+          arg = "arg1",
+          arg2 = "arg2";
 
-      mediator.Subscribe("test", spy);
-      mediator.Publish("test", "test");
+      mediator.Subscribe(channel, spy);
+      mediator.Publish(channel, arg, arg2);
 
-      expect(spy).toHaveBeenCalledWith(arg);
+      expect(spy).toHaveBeenCalledWith(arg, arg2);
     });
 
     it("should call all matching predicates", function(){

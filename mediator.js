@@ -30,7 +30,7 @@
   };
 
   Channel.prototype = {
-    AddSubscriber: function(fn, context, options){
+    AddSubscriber: function(fn, options, context){
       this._callbacks.push({ fn: fn, context: context, options: options });
     },
 
@@ -110,26 +110,17 @@
 
     Subscribe: function(channelName, fn, options, context){
       options = options || {};
+      context = context || window;
 
-      if(context === undefined){
-        context = window;
-      }
-
-      this._channelFromNamespace(channelName).AddSubscriber(fn, context, options );
+      this._channelFromNamespace(channelName).AddSubscriber(fn, options, context );
     },
 
     Remove: function(channelName, fn){
-      var channel = this._channelFromNamespace(channelName);
-      channel.RemoveSubscriber(fn);
+      this._channelFromNamespace(channelName).RemoveSubscriber(fn);
     },
     
     Publish: function(channelName){
-      var data = Array.prototype.slice.call(arguments, 1),
-        callback,
-        callbacks,
-        channel = this._channelFromNamespace(channelName);
-
-      channel.Publish(data);
+      this._channelFromNamespace(channelName).Publish(Array.prototype.slice.call(arguments, 1));
     }
   };
 

@@ -1,4 +1,4 @@
-describe("Mediator", function() {
+describe("Channel", function() {
   var mediator;
 
   beforeEach(function() {
@@ -17,7 +17,7 @@ describe("Mediator", function() {
       var spy = jasmine.createSpy("adding a callback with context"),
           contextObj = { derp: "herp" };
 
-      channel.AddSubscriber(spy, contextObj);
+      channel.AddSubscriber(spy, {}, contextObj);
       expect(channel._callbacks[0].context).toBe(contextObj);
     });
 
@@ -26,7 +26,7 @@ describe("Mediator", function() {
           contextObj = window,
           optionsObj = { derp: "herp" };
 
-      channel.AddSubscriber(spy, contextObj, optionsObj);
+      channel.AddSubscriber(spy, optionsObj, contextObj);
       expect(channel._callbacks[0].options).toBe(optionsObj);
     });
   });
@@ -140,7 +140,7 @@ describe("Mediator", function() {
       var spy = jasmine.createSpy("context for callback"),
           data = ["data"];
 
-      channel.AddSubscriber(function() { this(); }, spy );
+      channel.AddSubscriber(function() { this(); }, {}, spy );
       channel.Publish(data);
 
       expect(spy).toHaveBeenCalled();

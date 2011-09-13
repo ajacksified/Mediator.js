@@ -12,7 +12,7 @@ subscriber methods to help event-based, asyncronous programming.  Its purpose
 is to make the usage of WebSockets, AJAX calls, or any other asynchronous 
 operations easier to maintain and test.
 
-*590 bytes, minifed and gzipped*
+*580 bytes, minifed and gzipped*
 
 Why?
 ---
@@ -31,7 +31,19 @@ predicate to perform more complex matching. Predicates are run using whatever
 args are passed in by the publishing class. Instantiate a new mediator, and
 then you can being subscribing, removing, and publishing. As of version 0.4,
 Mediator.js supports namespacing.
+
+Subscription signature:
+    (channel, callback, <options>, <context>);
+    Mediator.Publish(channel, <data, data, ... >)
+    Mediator.Remove(<channel>) 
     
+
+Mediator.Subscribe options:
+    { 
+      predicate: function(*args){ return arg1 == arg2; } 
+    }
+
+Examples:
     var mediator = new Mediator();
 
     // Alert data when the "message" channel is published to
