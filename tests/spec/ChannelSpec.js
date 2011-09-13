@@ -5,10 +5,10 @@ describe("Mediator", function() {
     channel = new Mediator.Channel();
   });
 
-  describe("AddCallback", function(){
+  describe("AddSubscriber", function(){
     it("should add a callback to the collection", function(){
       var spy = jasmine.createSpy("adding a test callback");
-      channel.AddCallback(spy);
+      channel.AddSubscriber(spy);
 
       expect(channel._callbacks.length).toBe(1);
     });
@@ -17,7 +17,7 @@ describe("Mediator", function() {
       var spy = jasmine.createSpy("adding a callback with context"),
           contextObj = { derp: "herp" };
 
-      channel.AddCallback(spy, contextObj);
+      channel.AddSubscriber(spy, contextObj);
       expect(channel._callbacks[0].context).toBe(contextObj);
     });
 
@@ -26,7 +26,7 @@ describe("Mediator", function() {
           contextObj = window,
           optionsObj = { derp: "herp" };
 
-      channel.AddCallback(spy, contextObj, optionsObj);
+      channel.AddSubscriber(spy, contextObj, optionsObj);
       expect(channel._callbacks[0].options).toBe(optionsObj);
     });
   });
@@ -68,25 +68,25 @@ describe("Mediator", function() {
     });
   });
 
-  describe("RemoveCallback", function(){
+  describe("RemoveSubscriber", function(){
     it("should remove callbacks if no fn is given", function(){
       var spy = jasmine.createSpy("adding a test callback");
 
-      channel.AddCallback(spy);
+      channel.AddSubscriber(spy);
       expect(channel._callbacks.length).toBe(1);
 
-      channel.RemoveCallback();
+      channel.RemoveSubscriber();
       expect(channel._callbacks.length).toBe(0);
     });
 
     it("should remove matching callbacks a valid fn is given", function(){
       var spy = jasmine.createSpy("adding a test callback");
 
-      channel.AddCallback(spy);
-      channel.AddCallback(function() {});
+      channel.AddSubscriber(spy);
+      channel.AddSubscriber(function() {});
       expect(channel._callbacks.length).toBe(2);
 
-      channel.RemoveCallback(spy);
+      channel.RemoveSubscriber(spy);
       expect(channel._callbacks.length).toBe(1);
     });
 
@@ -94,11 +94,11 @@ describe("Mediator", function() {
       var spy = jasmine.createSpy("adding a test callback"),
           invalidFn = "derp";
 
-      channel.AddCallback(spy);
-      channel.AddCallback(function() {});
+      channel.AddSubscriber(spy);
+      channel.AddSubscriber(function() {});
       expect(channel._callbacks.length).toBe(2);
 
-      channel.RemoveCallback(invalidFn);
+      channel.RemoveSubscriber(invalidFn);
       expect(channel._callbacks.length).toBe(2);
     });
 
@@ -106,10 +106,10 @@ describe("Mediator", function() {
       var spy = jasmine.createSpy("adding a test callback"),
         spy2 = jasmine.createSpy("adding another test callback");
 
-      channel.AddCallback(spy);
+      channel.AddSubscriber(spy);
       expect(channel._callbacks.length).toBe(1);
 
-      channel.RemoveCallback(spy2);
+      channel.RemoveSubscriber(spy2);
       expect(channel._callbacks.length).toBe(1);
     });
   });
@@ -120,7 +120,7 @@ describe("Mediator", function() {
       var spy = jasmine.createSpy("adding a test callback"),
           data = ["data"];
 
-      channel.AddCallback(spy);
+      channel.AddSubscriber(spy);
       channel.Publish(data);
 
       expect(spy).toHaveBeenCalledWith(data[0]);
@@ -130,7 +130,7 @@ describe("Mediator", function() {
       var spy = jasmine.createSpy("adding a test callback"),
           data = ["data"];
 
-      channel.AddCallback(spy, window, { predicate: function(data){ return data.length == 4 } });
+      channel.AddSubscriber(spy, window, { predicate: function(data){ return data.length == 4 } });
       channel.Publish(data);
 
       expect(spy).toHaveBeenCalledWith(data[0]);
@@ -140,7 +140,7 @@ describe("Mediator", function() {
       var spy = jasmine.createSpy("context for callback"),
           data = ["data"];
 
-      channel.AddCallback(function() { this(); }, spy );
+      channel.AddSubscriber(function() { this(); }, spy );
       channel.Publish(data);
 
       expect(spy).toHaveBeenCalled();
@@ -152,7 +152,7 @@ describe("Mediator", function() {
           data = ["data"];
 
       channel.AddChannel(channelName);
-      channel._channels[channelName].AddCallback(spy);
+      channel._channels[channelName].AddSubscriber(spy);
 
       channel.Publish(data);
 

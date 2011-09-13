@@ -1,5 +1,5 @@
 /*! 
-* Mediator.js Library v0.3
+* Mediator.js Library v0.4
 * https://github.com/ajacksified/Mediator.js
 *
 * Copyright 2011, Jack Lawson
@@ -18,7 +18,7 @@
     }else{
       this._channels = new Channel();
     }
-  }
+  };
 
   function Channel(){
     if (!this instanceof Channel) {
@@ -27,10 +27,10 @@
       this._callbacks = [];
       this._channels = [];
     }
-  }
+  };
 
   Channel.prototype = {
-    AddCallback: function(fn, context, options){
+    AddSubscriber: function(fn, context, options){
       this._callbacks.push({ fn: fn, context: context, options: options });
     },
 
@@ -46,15 +46,22 @@
       return this._channels[channel];
     },
 
-    RemoveCallback: function(fn){
+    RemoveSubscriber: function(fn){
       if(!fn){
         this._callbacks = []; 
-        return;
       }
       
       for(var y in this._callbacks) {
-        if(this._callbacks[y].fn == fn){
-          this._callbacks.splice(y,1);
+        if(this._callbacks.hasOwnProperty(y)){
+          if(this._callbacks[y].fn == fn){
+            this._callbacks.splice(y,1);
+          }
+        }
+      }
+
+      for(var z in this._channels){
+        if(this._channels.hasOwnProperty(z)){
+          this._channels[z].RemoveSubscriber(fn);
         }
       }
     },
@@ -80,27 +87,9 @@
         }
       }
     }
-  }
+  };
 
   Mediator.prototype = {
-    _defaultOptions: {},
-
-    _mergeRecursive: function (obj1, obj2) {
-      for (var p in obj2) {
-        try {
-          if (obj2[p].constructor == Object) {
-            obj1[p] = MergeRecursive(obj1[p], obj2[p]);
-          } else {
-            obj1[p] = obj2[p];
-          }
-        } catch(e) {
-          obj1[p] = obj2[p];
-        }
-      }
-
-      return obj1;
-    },
-
     _channelFromNamespace: function(namespace){
       var channel = this._channels;
       var namespaceHeirarchy = namespace.split(':');
@@ -120,18 +109,18 @@
     },
 
     Subscribe: function(channelName, fn, options, context){
-      this._mergeRecursive(options, this._defaultOptions);
+      options = options || {};
 
       if(context === undefined){
         context = window;
       }
 
-      this._channelFromNamespace(channelName).AddCallback(fn, context, options );
+      this._channelFromNamespace(channelName).AddSubscriber(fn, context, options );
     },
 
     Remove: function(channelName, fn){
       var channel = this._channelFromNamespace(channelName);
-      channel.RemoveCallback(fn);
+      channel.RemoveSubscriber(fn);
     },
     
     Publish: function(channelName){

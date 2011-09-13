@@ -89,7 +89,7 @@ describe("Mediator", function() {
   });
 
   describe("namespaces", function(){
-    it("should call functions within a given channel namespace", function(){
+    it("should call all functions within a given channel namespace", function(){
       var spy = jasmine.createSpy("test channel callback");
       var spy2 = jasmine.createSpy("second test channel callback");
 
@@ -100,5 +100,33 @@ describe("Mediator", function() {
       expect(spy).toHaveBeenCalled();
       expect(spy2).toHaveBeenCalled();
     });
+
+    it("should call only functions within a given channel namespace", function(){
+      var spy = jasmine.createSpy("test channel callback");
+      var spy2 = jasmine.createSpy("second test channel callback");
+
+      mediator.Subscribe("test:channel", spy);
+      mediator.Subscribe("derp:channel2", spy2);
+      mediator.Publish("test");
+
+      expect(spy).toHaveBeenCalled();
+      expect(spy2).not.toHaveBeenCalled();
+    });
+
+    it("should remove functions within a given channel namespace", function(){
+      var spy = jasmine.createSpy("inner test channel callback"),
+          spy2 = jasmine.createSpy("outermost channel callback");
+
+      mediator.Subscribe("test:test1:test2", spy);
+      mediator.Subscribe("test", spy2);
+
+      mediator.Remove("test:test1");
+
+      mediator.Publish("test");
+
+      expect(spy).not.toHaveBeenCalled();
+      expect(spy2).toHaveBeenCalled();
+    });
+
   });
 });
