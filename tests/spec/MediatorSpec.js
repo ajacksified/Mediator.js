@@ -9,25 +9,12 @@ describe("Mediator", function() {
     
   });
 
-  describe("adding subscribers", function(){
-    it("should add a callback for a given channel", function(){
-      mediator.Subscribe("test", function(){});
-      expect(mediator._callbacks.test).toBeDefined();
-    });
-
-    it("should add multiple callbacks for a given channel", function(){
-      mediator.Subscribe("test", function(){});
-      mediator.Subscribe("test", function(){});
-      expect(mediator._callbacks.test.length).toBe(2);
-    });
-  });
-
   describe("publishing", function(){
     it("should call a callback for a given channel", function(){
       var spy = jasmine.createSpy("test channel callback");
 
-      mediator.Subscribe("test", spy);
-      mediator.Publish("test");
+      mediator.Subscribe("testX", spy);
+      mediator.Publish("testX");
 
       expect(spy).toHaveBeenCalled();
     });
@@ -102,6 +89,21 @@ describe("Mediator", function() {
       
       expect(spy).not.toHaveBeenCalled();
       expect(spy2).toHaveBeenCalled();
+    });
+  });
+
+  describe("namespaces", function(){
+    it("should call functions within a given channel namespace", function(){
+      var spy = jasmine.createSpy("test channel callback");
+      var spy2 = jasmine.createSpy("second test channel callback");
+
+      mediator.Subscribe("test:channel", spy);
+      mediator.Subscribe("test:channel2", spy2);
+      console.log(mediator);
+      //mediator.Publish("test");
+
+      //expect(spy).toHaveBeenCalled();
+      //expect(spy2).toHaveBeenCalled();
     });
   });
 });

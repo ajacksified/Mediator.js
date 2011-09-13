@@ -16,85 +16,99 @@
     if (!this instanceof Mediator) {
       return new Mediator();
     }else{
-      this._callbacks = { Predicates: [] };
+      this._channels = { };
     }
   }
 
   Mediator.prototype = {
     _defaultOptions: {},
 
+    _mergeRecursive: function (obj1, obj2) {
+      for (var p in obj2) {
+        try {
+          if (obj2[p].constructor == Object) {
+            obj1[p] = MergeRecursive(obj1[p], obj2[p]);
+          } else {
+            obj1[p] = obj2[p];
+          }
+        } catch(e) {
+          obj1[p] = obj2[p];
+        }
+      }
+
+      return obj1;
+    },
+
+    _channelFromNamespace: function(namespace){
+      var namespaceHeirarchy = namespace.split(':');
+      var channel = this._channels;
+      
+      if(namespaceHeirarchy.length > 0){
+        var channel = this._channels;
+
+        for(var i = 0, j = namespaceHeirarchy.length; i < j; i++){
+          if(i > 0 && !channel.channels[namespaceHeirarchy[i]]){
+            channel.channels[namespaceHeirarchy[i]] = [];
+          }else if(i == 0){
+            channel[namespaceHeirarchy[i]] = { "channels": [], "callbacks": [] };
+          }
+          
+          channel = channel[namespaceHeirarchy[i]];
+        }
+      }
+
+      return channel;
+    },
+
     Subscribe: function(channel, fn, options, context){
-      MergeRecursive(options, this._defaultOptions);
+      this._mergeRecursive(options, this._defaultOptions);
 
       if(context === undefined){
         context = window;
       }
 
-      if(!this._callbacks[channel]){
-        this._callbacks[channel] = [];
-      }
-
-      this._callbacks[channel].push({ fn: fn, context: context, options: options });
+      this._channelFromNamespace(channel).callbacks.push({ fn: fn, context: context, options: options });
       return;
-
     },
 
-    Remove: function(channel, fn){
-      if(this._callbacks[channel]){
+    Remove: function(channelName, fn){
+      var channel = this._channelFromNamespace(channel)
+      if(this._channelFromNamespace(channel)){;
+
         if(!fn){
-          this._callbacks[channel] = [];
+          channel = [];
           return;
         }
         
-        for(var y in this._callbacks[channel]) {
-          if(this._callbacks[channel][y].fn == fn){
-            this._callbacks[channel].splice(y,1);
+        for(var y in channel.callbacks) {
+          if(channel.callbacks[y].fn == fn){
+            channel.callbacks.splice(y,1);
           }
         }
       } 
     },
     
-    Publish: function(channel){
+    Publish: function(channelName){
       var data = Array.prototype.slice.call(arguments, 1),
         callback,
-        callbacks;
+        callbacks,
+        channel = this._channelFromNamespace(channelName);
 
-      if(channel !== undefined && this._callbacks[channel]){
+      for(var x in channel.callbacks){
+        if(channel.callbacks.hasOwnProperty(x)){
+          var callback = channel.callbacks[x];
 
-        for(var x in this._callbacks[channel]){
-          callbacks = this._callbacks[channel];
-
-          if(callbacks.hasOwnProperty(x)){
-            var callback = callbacks[x];
-
-            if(callback.options !== undefined && typeof callback.options.predicate == "function"){
-              if(callback.options.predicate.apply(callback.context, data)){
-                callback.fn.apply(callback.context, data);
-              } 
-            }else{
+          if(callback.options !== undefined && typeof callback.options.predicate == "function"){
+            if(callback.options.predicate.apply(callback.context, data)){
               callback.fn.apply(callback.context, data);
-            }
+            } 
+          }else{
+            callback.fn.apply(callback.context, data);
           }
         }
-      } 
-    }
-  };
-
-  function MergeRecursive(obj1, obj2) {
-    for (var p in obj2) {
-      try {
-        if (obj2[p].constructor == Object) {
-          obj1[p] = MergeRecursive(obj1[p], obj2[p]);
-        } else {
-          obj1[p] = obj2[p];
-        }
-      } catch(e) {
-        obj1[p] = obj2[p];
       }
     }
-
-    return obj1;
-  }
+  };
 
   window.Mediator = Mediator;
 })(window);
