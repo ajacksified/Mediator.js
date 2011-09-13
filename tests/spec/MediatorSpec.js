@@ -5,10 +5,6 @@ describe("Mediator", function() {
     mediator = new Mediator();
   });
 
-  describe("initialization", function(){
-    
-  });
-
   describe("publishing", function(){
     it("should call a callback for a given channel", function(){
       var spy = jasmine.createSpy("test channel callback");
@@ -20,8 +16,8 @@ describe("Mediator", function() {
     });
 
     it("should call callbacks for all functions in a given channel", function(){
-      var spy = jasmine.createSpy("test channel callback");
-      var spy2 = jasmine.createSpy("second test channel callback");
+      var spy = jasmine.createSpy("test channel callback"),
+          spy2 = jasmine.createSpy("second test channel callback");
 
       mediator.Subscribe("test", spy);
       mediator.Subscribe("test", spy2);
@@ -33,8 +29,8 @@ describe("Mediator", function() {
     });
 
     it("should pass arguments to the given function", function(){
-      var spy = jasmine.createSpy("test channel callback with args");
-      var arg = "test";
+      var spy = jasmine.createSpy("test channel callback with args"),
+          arg = "test";
 
       mediator.Subscribe("test", spy);
       mediator.Publish("test", "test");
@@ -43,9 +39,9 @@ describe("Mediator", function() {
     });
 
     it("should call all matching predicates", function(){
-      var spy = jasmine.createSpy("predicate: length of 4");
-      var spy2 = jasmine.createSpy("predicate: starts with Y");
-      var spy3 = jasmine.createSpy("test channel callback");
+      var spy = jasmine.createSpy("predicate: length of 4"),
+          spy2 = jasmine.createSpy("predicate: starts with Y"),
+          spy3 = jasmine.createSpy("test channel callback");
       
       var predicate = function(data){
         return data.length === 4;
@@ -79,8 +75,8 @@ describe("Mediator", function() {
     });
 
     it("should remove callbacks for a given channel / named function pair", function(){
-      var spy = jasmine.createSpy("test channel callback");
-      var spy2 = jasmine.createSpy("second test channel callback");
+      var spy = jasmine.createSpy("test channel callback"),
+          spy2 = jasmine.createSpy("second test channel callback");
 
       mediator.Subscribe("test", spy);
       mediator.Subscribe("test", spy2);
