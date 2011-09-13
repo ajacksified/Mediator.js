@@ -20,15 +20,6 @@ describe("Mediator", function() {
       mediator.Subscribe("test", function(){});
       expect(mediator._callbacks.test.length).toBe(2);
     });
-
-    it("should add predicate-based matching functions", function(){
-      var predicate = function(data){
-        return data.length === 4;
-      }
-
-      mediator.Subscribe(predicate, function(){ });
-      expect(mediator._callbacks.Predicates.length).toBe(1);
-    });
   });
 
   describe("publishing", function(){
@@ -77,8 +68,8 @@ describe("Mediator", function() {
         return data[0] == "Y";
       }
 
-      mediator.Subscribe(predicate, spy);
-      mediator.Subscribe(predicate2, spy2);
+      mediator.Subscribe("test", spy, { predicate: predicate });
+      mediator.Subscribe("test", spy2, { predicate: predicate2 });
       mediator.Subscribe("test", spy3);
 
       mediator.Publish("test", "Test");
@@ -112,6 +103,5 @@ describe("Mediator", function() {
       expect(spy).not.toHaveBeenCalled();
       expect(spy2).toHaveBeenCalled();
     });
-
   });
 });

@@ -1,5 +1,5 @@
 /*! 
-* Mediator.js Library v0.2
+* Mediator.js Library v03.
 * https://github.com/ajacksified/Mediator.js
 *
 * Copyright 2011, Jack Lawson
@@ -8,7 +8,7 @@
 * For more information: http://www.thejacklawson.com/index.php/2011/06/mediators-for-modularized-asynchronous-programming-in-javascript/
 * Project on GitHub: https://github.com/ajacksified/Mediator.js
 *
-* Last update: Sep 6 2011
+* Last update: Sep 13 2011
 */
 
 (function(){
@@ -21,40 +21,25 @@
   }
 
   Mediator.prototype = {
-    Subscribe: function(channel, fn, context){
+    _defaultOptions: {},
+
+    Subscribe: function(channel, fn, options, context){
+      MergeRecursive(options, this._defaultOptions);
+
       if(context === undefined){
         context = window;
       }
 
-      if(typeof channel === "function"){
-        this._callbacks.Predicates.push({ predicate: channel, fn: fn, context: context});
-        return;
-      }
-      
       if(!this._callbacks[channel]){
         this._callbacks[channel] = [];
       }
 
-      this._callbacks[channel].push({ fn: fn, context: context });
+      this._callbacks[channel].push({ fn: fn, context: context, options: options });
       return;
 
     },
 
     Remove: function(channel, fn){
-      if(this._callbacks.Predicates.length > 0 && typeof channel == "function"){
-        var counter = 0,
-          callback = {};
-        for(var x = 0, l = this._callbacks.Predicates.length; x < l; x++){
-          callback = this._callbacks.Predicates[x];
-
-          if(callback.predicate == channel && (!fn || fn == callback.fn)){
-            this._callbacks.Predicates.splice(x, 1);
-          }
-        }
-        
-        return;
-      }
-        
       if(this._callbacks[channel]){
         if(!fn){
           this._callbacks[channel] = [];
@@ -81,21 +66,35 @@
 
           if(callbacks.hasOwnProperty(x)){
             var callback = callbacks[x];
-            callback.fn.apply(callback.context, data);
+
+            if(callback.options !== undefined && typeof callback.options.predicate == "function"){
+              if(callback.options.predicate.apply(callback.context, data)){
+                callback.fn.apply(callback.context, data);
+              } 
+            }else{
+              callback.fn.apply(callback.context, data);
+            }
           }
         }
       } 
-      
-      for(var y in this._callbacks.Predicates){
-        context = window;
-        callback = this._callbacks.Predicates[y];
-        
-        if(callback.predicate.apply(callback.context, data)){
-          callback.fn.apply(callback.context, data);
-        } 
-      }
     }
   };
+
+  function MergeRecursive(obj1, obj2) {
+    for (var p in obj2) {
+      try {
+        if (obj2[p].constructor == Object) {
+          obj1[p] = MergeRecursive(obj1[p], obj2[p]);
+        } else {
+          obj1[p] = obj2[p];
+        }
+      } catch(e) {
+        obj1[p] = obj2[p];
+      }
+    }
+
+    return obj1;
+  }
 
   window.Mediator = Mediator;
 })(window);
