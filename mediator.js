@@ -16,7 +16,69 @@
     if (!this instanceof Mediator) {
       return new Mediator();
     }else{
-      this._channels = { };
+      this._channels = new Channel();
+    }
+  }
+
+  function Channel(){
+    if (!this instanceof Channel) {
+      return new Channel();
+    }else{
+      this._callbacks = [];
+      this._channels = [];
+    }
+  }
+
+  Channel.prototype = {
+    AddCallback: function(fn, context, options){
+      this._callbacks.push({ fn: fn, context: context, options: options });
+    },
+
+    AddChannel: function(channel){
+      this._channels[channel] = new Channel();
+    },
+
+    HasChannel: function(channel){
+      return this._channels.hasOwnProperty(channel);
+    },
+
+    ReturnChannel: function(channel){
+      return this._channels[channel];
+    },
+
+    RemoveCallback: function(fn){
+      if(!fn){
+        this._callbacks = []; 
+        return;
+      }
+      
+      for(var y in this._callbacks) {
+        if(this._callbacks[y].fn == fn){
+          this._callbacks.splice(y,1);
+        }
+      }
+    },
+
+    Publish: function(data){
+      for(var x in this._callbacks){
+        if(this._callbacks.hasOwnProperty(x)){
+          var callback = this._callbacks[x];
+
+          if(callback.options !== undefined && typeof callback.options.predicate == "function"){
+            if(callback.options.predicate.apply(callback.context, data)){
+              callback.fn.apply(callback.context, data);
+            } 
+          }else{
+            callback.fn.apply(callback.context, data);
+          }
+        }
+      }
+
+      for(var x in this._channels){
+        if(this._channels.hasOwnProperty(x)){
+          this._channels[x].Publish(data);
+        }
+      }
     }
   }
 
@@ -40,52 +102,36 @@
     },
 
     _channelFromNamespace: function(namespace){
-      var namespaceHeirarchy = namespace.split(':');
       var channel = this._channels;
+      var namespaceHeirarchy = namespace.split(':');
       
       if(namespaceHeirarchy.length > 0){
-        var channel = this._channels;
-
         for(var i = 0, j = namespaceHeirarchy.length; i < j; i++){
-          if(i > 0 && !channel.channels[namespaceHeirarchy[i]]){
-            channel.channels[namespaceHeirarchy[i]] = [];
-          }else if(i == 0){
-            channel[namespaceHeirarchy[i]] = { "channels": [], "callbacks": [] };
+
+          if(!channel.HasChannel(namespaceHeirarchy[i])){
+            channel.AddChannel(namespaceHeirarchy[i]);
           }
           
-          channel = channel[namespaceHeirarchy[i]];
+          channel = channel.ReturnChannel(namespaceHeirarchy[i]);
         }
       }
-
+      
       return channel;
     },
 
-    Subscribe: function(channel, fn, options, context){
+    Subscribe: function(channelName, fn, options, context){
       this._mergeRecursive(options, this._defaultOptions);
 
       if(context === undefined){
         context = window;
       }
 
-      this._channelFromNamespace(channel).callbacks.push({ fn: fn, context: context, options: options });
-      return;
+      this._channelFromNamespace(channelName).AddCallback(fn, context, options );
     },
 
     Remove: function(channelName, fn){
-      var channel = this._channelFromNamespace(channel)
-      if(this._channelFromNamespace(channel)){;
-
-        if(!fn){
-          channel = [];
-          return;
-        }
-        
-        for(var y in channel.callbacks) {
-          if(channel.callbacks[y].fn == fn){
-            channel.callbacks.splice(y,1);
-          }
-        }
-      } 
+      var channel = this._channelFromNamespace(channelName);
+      channel.RemoveCallback(fn);
     },
     
     Publish: function(channelName){
@@ -94,21 +140,10 @@
         callbacks,
         channel = this._channelFromNamespace(channelName);
 
-      for(var x in channel.callbacks){
-        if(channel.callbacks.hasOwnProperty(x)){
-          var callback = channel.callbacks[x];
-
-          if(callback.options !== undefined && typeof callback.options.predicate == "function"){
-            if(callback.options.predicate.apply(callback.context, data)){
-              callback.fn.apply(callback.context, data);
-            } 
-          }else{
-            callback.fn.apply(callback.context, data);
-          }
-        }
-      }
+      channel.Publish(data);
     }
   };
 
   window.Mediator = Mediator;
+  window.Mediator.Channel = Channel;
 })(window);

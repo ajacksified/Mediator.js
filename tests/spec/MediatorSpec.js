@@ -99,11 +99,10 @@ describe("Mediator", function() {
 
       mediator.Subscribe("test:channel", spy);
       mediator.Subscribe("test:channel2", spy2);
-      console.log(mediator);
-      //mediator.Publish("test");
+      mediator.Publish("test");
 
-      //expect(spy).toHaveBeenCalled();
-      //expect(spy2).toHaveBeenCalled();
+      expect(spy).toHaveBeenCalled();
+      expect(spy2).toHaveBeenCalled();
     });
   });
 });
