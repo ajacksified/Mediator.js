@@ -10,7 +10,7 @@ Mediator is a simple class that allows you to register, unregister, and call
 methods based on data passed in.  Its purpose is to make the usage of WebSockets, 
 AJAX calls, or any other asynchronous operation easier to maintain and test.
 
-*462 bytes, minifed and gzipped*
+*452 bytes, minifed and gzipped*
 
 Why?
 ---

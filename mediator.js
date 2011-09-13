@@ -1,5 +1,5 @@
 /*! 
-* Mediator.js Library v03.
+* Mediator.js Library v0.3
 * https://github.com/ajacksified/Mediator.js
 *
 * Copyright 2011, Jack Lawson
