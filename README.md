@@ -1,6 +1,6 @@
 Mediator.js
 ===========
-Version 0.2
+Version 0.3
 For more information, please see [my blog post](http://www.thejacklawson.com/index.php/2011/06/mediators-for-modularized-asynchronous-programming-in-javascript/)
 
 A light utility class to help implement the Mediator pattern to ease asynchronous programming
@@ -34,7 +34,7 @@ args are passed in by the publishing class.
     
     // Alert the "message" property of the object called when the predicate function returns true (The "From" property is equal to "Jack")
     var predicate = function(data){ return data.From === "Jack" };
-    Mediator.Subscribe(predicate, function(data){ alert(data.Message); });
+    Mediator.Subscribe("channel", function(data){ alert(data.Message); }, { predicate: predicate });
     Mediator.Publish("channel", { Message: "Hey!", From: "Jack" }); //alerts
     Mediator.Publish("channel", { Message: "Hey!", From: "Audrey" }); //doesn't alert
 
@@ -48,17 +48,16 @@ to be able to be removed.
     // unregisters *only* MethodFN, a named function, from "channel" 
     Mediator.Remove("channel", MethodFN);
     
-    // unregisters all callbacks otherwise called by the predicate PredicateFN
-    Mediator.Remove(PredicateFN);
-    
-    // unregisters the MethodFN from PredicateFN
-    Mediator.Remove(PredicateFN, MethodFN);
-
 You can call the registered functions with the Publish method, which accepts 
 an args array:
 
     Mediator.Publish("channel", "argument", "another one", { etc: true }); // args go on forever
 
+
+Changes from Last Version
+-------------------------
+Predicate no longer acts as a channel and is moved to an options object
+at the end of the subcription call.
 
 License
 -------
