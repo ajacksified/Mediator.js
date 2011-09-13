@@ -128,5 +128,19 @@ describe("Mediator", function() {
       expect(spy2).toHaveBeenCalled();
     });
 
+    it("should publish to specific namespaces", function(){
+      var spy = jasmine.createSpy("inner test channel callback"),
+          spy2 = jasmine.createSpy("outermost channel callback");
+
+      mediator.Subscribe("test:test1:test2", spy);
+      mediator.Subscribe("test", spy2);
+
+      mediator.Publish("test:test1", "data");
+
+      expect(spy).toHaveBeenCalledWith("data");
+      expect(spy2).not.toHaveBeenCalled();
+
+    });
+
   });
 });
