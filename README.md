@@ -28,7 +28,9 @@ Usage
 
 You can register events with the mediator two ways: using channels, or with a 
 predicate to perform more complex matching. Predicates are run using whatever
-args are passed in by the publishing class.
+args are passed in by the publishing class. Instantiate a new mediator, and
+then you can being subscribing, removing, and publishing. As of version 0.4,
+Mediator.js supports namespacing.
     
     var mediator = new Mediator();
 
