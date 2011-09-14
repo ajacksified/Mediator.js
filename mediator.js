@@ -1,5 +1,5 @@
 /*! 
-* Mediator.js Library v0.4
+* Mediator.js Library v0.4.1
 * https://github.com/ajacksified/Mediator.js
 *
 * Copyright 2011, Jack Lawson
@@ -12,14 +12,6 @@
 */
 
 (function(){
-  function Mediator() {
-    if (!this instanceof Mediator) {
-      return new Mediator();
-    }else{
-      this._channels = new Channel();
-    }
-  };
-
   function Channel(){
     if (!this instanceof Channel) {
       return new Channel();
@@ -49,35 +41,32 @@
     RemoveSubscriber: function(fn){
       if(!fn){
         this._callbacks = []; 
-      }
-      
-      for(var y in this._callbacks) {
-        if(this._callbacks.hasOwnProperty(y)){
-          if(this._callbacks[y].fn == fn){
-            this._callbacks.splice(y,1);
+        
+        for(var z in this._channels){
+          if(this._channels.hasOwnProperty(z)){
+            this._channels[z].RemoveSubscriber(fn);
           }
         }
       }
-
-      for(var z in this._channels){
-        if(this._channels.hasOwnProperty(z)){
-          this._channels[z].RemoveSubscriber(fn);
+      
+      for(var y = 0, x = this._callbacks.length; y < x; y++) {
+        if(this._callbacks[y].fn == fn){
+          this._callbacks.splice(y,1);
+          x--; y--;
         }
       }
     },
 
     Publish: function(data){
-      for(var x in this._callbacks){
-        if(this._callbacks.hasOwnProperty(x)){
-          var callback = this._callbacks[x];
+      for(var y = 0, x = this._callbacks.length; y < x; y++) {
+        var callback = this._callbacks[y];
 
-          if(callback.options !== undefined && typeof callback.options.predicate == "function"){
-            if(callback.options.predicate.apply(callback.context, data)){
-              callback.fn.apply(callback.context, data);
-            } 
-          }else{
+        if(callback.options !== undefined && typeof callback.options.predicate === "function"){
+          if(callback.options.predicate.apply(callback.context, data)){
             callback.fn.apply(callback.context, data);
-          }
+          } 
+        }else{
+          callback.fn.apply(callback.context, data);
         }
       }
 
@@ -86,6 +75,14 @@
           this._channels[x].Publish(data);
         }
       }
+    }
+  };
+  
+  function Mediator() {
+    if (!this instanceof Mediator) {
+      return new Mediator();
+    }else{
+      this._channels = new Channel();
     }
   };
 
@@ -110,7 +107,7 @@
 
     Subscribe: function(channelName, fn, options, context){
       options = options || {};
-      context = context || window;
+      context = context || {};
 
       this._channelFromNamespace(channelName).AddSubscriber(fn, options, context );
     },
@@ -124,6 +121,7 @@
     }
   };
 
+  Mediator.Channel = Channel;
   window.Mediator = Mediator;
-  window.Mediator.Channel = Channel;
 })(window);
+
