@@ -90,6 +90,43 @@ describe("Mediator", function() {
     });
   });
 
+  describe("updating", function(){
+    it("should update callback by identifier", function(){
+      var spy = jasmine.createSpy("test channel callback"),
+          newPredicate = function(data){ return data; };
+
+      var sub = mediator.Subscribe("test", spy),
+          subId = sub.id;
+
+      var subThatIReallyGotLater = mediator.GetSubscriber(subId, "test");
+      subThatIReallyGotLater.Update({ options: { predicate: newPredicate } });
+      expect(subThatIReallyGotLater.options.predicate).toBe(newPredicate);
+    });
+
+    it("should find callback by identifier recursively, then update", function(){
+      var spy = jasmine.createSpy("test channel callback"),
+          newPredicate = function(data){ return data; };
+
+      var sub = mediator.Subscribe("test:deeper", spy),
+          subId = sub.id;
+
+      var subThatIReallyGotLater = mediator.GetSubscriber(subId);
+      subThatIReallyGotLater.Update({ options: { predicate: newPredicate } });
+      expect(subThatIReallyGotLater.options.predicate).toBe(newPredicate);
+    });
+
+    it("should update callback by fn", function(){
+      var spy = jasmine.createSpy("test channel callback"),
+          newPredicate = function(data){ return data; };
+
+      var sub = mediator.Subscribe("test", spy);
+
+      var subThatIReallyGotLater = mediator.GetSubscriber(spy, "test");
+      subThatIReallyGotLater.Update({ options: { predicate: newPredicate } });
+      expect(subThatIReallyGotLater.options.predicate).toBe(newPredicate);
+    });
+  });
+
   describe("namespaces", function(){
     it("should call all functions within a given channel namespace", function(){
       var spy = jasmine.createSpy("test channel callback");

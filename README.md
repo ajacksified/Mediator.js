@@ -1,6 +1,6 @@
 Mediator.js
 ===========
-Version 04.
+Version 0.5.0
 For more information, please see 
 [my blog post](http://www.thejacklawson.com/index.php/2011/06/mediators-for-modularized-asynchronous-programming-in-javascript/)
 
@@ -12,7 +12,7 @@ subscriber methods to help event-based, asyncronous programming.  Its purpose
 is to make the usage of WebSockets, AJAX calls, or any other asynchronous 
 operations easier to maintain and test.
 
-*580 bytes, minifed and gzipped*
+*933 bytes, minifed and gzipped*
 
 Why?
 ---
@@ -29,8 +29,7 @@ Usage
 You can register events with the mediator two ways: using channels, or with a 
 predicate to perform more complex matching. Predicates are run using whatever
 args are passed in by the publishing class. Instantiate a new mediator, and
-then you can being subscribing, removing, and publishing. As of version 0.4,
-Mediator.js supports namespacing.
+then you can being subscribing, removing, and publishing.
 
 Subscription signature:
     (channel, callback, <options>, <context>);
@@ -38,15 +37,26 @@ Subscription signature:
     Mediator.Remove(<channel>) 
     
 
-Mediator.Subscribe options:
+Mediator.Subscribe options (all are optional; default is empty):
     { 
       predicate: function(*args){ return arg1 == arg2; } 
+      priority: 0|1|... (array index; max of callback array length, min of 0)
+    }
+
+Subscriber object (returned on Mediator.Subscribe):
+    {
+      id, // guid
+      fn, // function
+      options, // options
+      context, // context for fn to be called within
+      Update(options){ ...} // function that accepts { fn, options, context }
     }
 
 Examples:
     var mediator = new Mediator();
 
     // Alert data when the "message" channel is published to
+    // Subscribe returns a "Subscriber" object
     mediator.Subscribe("message", function(data){ alert(data); });
     mediator.Publish("message", "Hello, world");
     
@@ -81,9 +91,34 @@ As of version 0.4, you can namespace your subscribing / removing / publishing as
     // will recursively remove everything under application:chat
     mediator.Remove("application:chat");
 
+You can update Subscriber priority:
+    var sub = mediator.Subscribe("application:chat", function(data){ ... });
+    var sub2 = mediator.Subscribe("application:chat", function(data){ ... });
+
+    // have sub2 executed first
+    mediator.GetChannel("application:chat").SetPriority(sub2.id, 0);
+
+You can update Subscriber callback, context, and/or options:
+    sub.Update({ fn: ..., context: { }, options: { ... });
+
 
 Changes from Last Version
 -------------------------
+Version 0.5.0
+* Added ability to access and update subscribing objects
+  * Subscribers now have a unique ID and can be queried by id or by function
+  * Subscriber class can have its function, context, or options updated
+  * Subscriber priority can be updated post-addition
+  * Channels made public by Mediator.GetChannel
+  * Added a little performance test
+
+Version 0.4.2
+* Added Priority to calls, allowing you to set callback index
+
+Version 0.4.1
+* Minor internal updates
+
+Version 0.4.0
 * Predicate no longer acts as a channel and is moved to an options object
 at the end of the subcription call.
 * Signatures changed; context moved to the end of subscriptions

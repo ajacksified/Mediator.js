@@ -1,0 +1,83 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+
+<!-- Provide a title.  This will be shown on the generated chart -->
+<title>Demo Test Suite</title>
+
+<script type="text/javascript" src="JSLitmus.js"></script>
+
+<script type="text/javascript" src="../../mediator.js"></script>
+
+
+<script type="text/javascript">
+  var m1 = new Mediator();
+  JSLitmus.test('add subscribers', function(count) {
+    while (count--) {
+      m1.Subscribe("test", function(data){});
+    }
+  });
+
+  var m2 = new Mediator();
+  m2.Subscribe("test", function(data){});
+  JSLitmus.test('publish to single subscriber', function(count) {
+    while (count--) {
+      m2.Publish("test", count);
+    }
+  });
+
+  var m3 = new Mediator();
+  for(var x = 1000; x > 0; x--){
+    m3.Subscribe("test", function(data){});
+  }
+  JSLitmus.test('publish to 1000 subscribers', function(count) {
+    while (count--) {
+      m3.Publish("test", count);
+    }
+  });
+
+  var m4 = new Mediator();
+  m4.Subscribe("test", function(data){}, { predicate: function(data){ return true; } });
+  JSLitmus.test('simplest possible predicate', function(count) {
+    while (count--) {
+      m4.Publish("test", count);
+    }
+  });
+
+  var m5 = new Mediator();
+  m5.Subscribe("test", function(data){}, { predicate: function(data){ return data%2; } });
+  JSLitmus.test('pretty simple predicate (num%2)', function(count) {
+    while (count--) {
+      m5.Publish("test", count);
+    }
+  });
+
+  var m6 = new Mediator();
+  for(var x = 1000; x > 0; x--){
+    if(x < 10){
+      m6.Subscribe("test:" + x%10, function(data){});
+    }else if(x < 100){
+      m6.Subscribe("test:" + x%10 + ":" + (x%100)/10, function(data){});
+    }else{
+      m6.Subscribe("test:" + x%10 + ":" + (x%100)/10 + ":" + (x%1000)/100, function(data){});
+    }
+  }
+
+  JSLitmus.test('publish to 1k nested functions 4 levels deep', function(count) {
+    while (count--) {
+      m6.Publish("test", count);
+    }
+  });
+
+</script>
+</head>
+
+<body>
+  <p>Born of my curiosity to see what this thing can do.</p>
+  <div id="test_element" style="overflow:hidden; width: 1px; height:1px;"></div>
+</body>
+</html>
+
