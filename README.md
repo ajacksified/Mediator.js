@@ -12,7 +12,7 @@ subscriber methods to help event-based, asyncronous programming.  Its purpose
 is to make the usage of WebSockets, AJAX calls, or any other asynchronous 
 operations easier to maintain and test.
 
-*933 bytes, minifed and gzipped*
+*<1k bytes, minifed and gzipped*
 
 Why?
 ---
