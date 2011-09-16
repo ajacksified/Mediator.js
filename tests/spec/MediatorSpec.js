@@ -15,6 +15,21 @@ describe("Mediator", function() {
       expect(spy).toHaveBeenCalled();
     });
 
+    it("should stop propagation if requested", function(){
+      var spy = jasmine.createSpy("test channel callback"),
+          spy2 = jasmine.createSpy("test channel callback that shouldn't be called"),
+          callback = function(c){ c.StopPropagation(); spy(); },
+          callback2 = function(){ spy2(); };
+
+      mediator.Subscribe("testX", callback);
+      mediator.Subscribe("testX", callback2);
+      mediator.Publish("testX");
+
+      expect(spy).toHaveBeenCalled();
+      expect(spy2).not.toHaveBeenCalled();
+    });
+
+
     it("should call callbacks for all functions in a given channel", function(){
       var spy = jasmine.createSpy("test channel callback"),
           spy2 = jasmine.createSpy("second test channel callback");
@@ -37,7 +52,7 @@ describe("Mediator", function() {
       mediator.Subscribe(channel, spy);
       mediator.Publish(channel, arg, arg2);
 
-      expect(spy).toHaveBeenCalledWith(arg, arg2);
+      expect(spy).toHaveBeenCalledWith(arg, arg2, mediator.GetChannel(channel));
     });
 
     it("should call all matching predicates", function(){
@@ -176,7 +191,7 @@ describe("Mediator", function() {
 
       mediator.Publish("test:test1", "data");
 
-      expect(spy).toHaveBeenCalledWith("data");
+      expect(spy).toHaveBeenCalled();
       expect(spy2).not.toHaveBeenCalled();
 
     });

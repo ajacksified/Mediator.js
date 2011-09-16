@@ -35,6 +35,9 @@ Subscription signature:
     (channel, callback, <options>, <context>);
     Mediator.Publish(channel, <data, data, ... >)
     Mediator.Remove(<channel>) 
+
+Callback signature:
+    function(<data, data ...>, channel);
     
 
 Mediator.Subscribe options (all are optional; default is empty):
@@ -101,9 +104,21 @@ You can update Subscriber priority:
 You can update Subscriber callback, context, and/or options:
     sub.Update({ fn: ..., context: { }, options: { ... });
 
+You can stop the chain of execution by calling channel.StopPropagation():
+    // for example, let's not post the message if the from and to are the same
+    mediator.Subscribe("application:chat", function(data, channel){
+      //something with data
+      channel.stopPropagation();
+    }, options: {
+      predicate: function(data){ return data.From == data.To },
+      priority: 0
+    });
 
 Changes from Last Version
 -------------------------
+Version 0.6.0
+* Added ability to stop the chain of calls using c.stopPropagation()
+
 Version 0.5.0
 * Added ability to access and update subscribing objects
   * Subscribers now have a unique ID and can be queried by id or by function

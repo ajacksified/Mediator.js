@@ -46,6 +46,7 @@
     }else{
       this._callbacks = [];
       this._channels = [];
+      this.stopped = false;
     }
   };
 
@@ -65,6 +66,10 @@
       }
 
       return callback;
+    },
+
+    StopPropagation: function(){
+      this.stopped = true;
     },
 
     GetSubscriber: function(identifier){
@@ -136,22 +141,28 @@
 
     Publish: function(data){
       for(var y = 0, x = this._callbacks.length; y < x; y++) {
-        var callback = this._callbacks[y];
+        if(!this.stopped){
+          var callback = this._callbacks[y];
 
-        if(callback.options !== undefined && typeof callback.options.predicate === "function"){
-          if(callback.options.predicate.apply(callback.context, data)){
+          if(callback.options !== undefined && typeof callback.options.predicate === "function"){
+            if(callback.options.predicate.apply(callback.context, data)){
+              callback.fn.apply(callback.context, data);
+            } 
+          }else{
             callback.fn.apply(callback.context, data);
-          } 
-        }else{
-          callback.fn.apply(callback.context, data);
+          }
         }
       }
 
       for(var x in this._channels){
-        if(this._channels.hasOwnProperty(x)){
-          this._channels[x].Publish(data);
+        if(!this.stopped){
+          if(this._channels.hasOwnProperty(x)){
+            this._channels[x].Publish(data);
+          }
         }
       }
+
+      this.stopped = false;
     }
   };
   
@@ -204,7 +215,12 @@
     },
     
     Publish: function(channelName){
-      this.GetChannel(channelName).Publish(Array.prototype.slice.call(arguments, 1));
+      var args = Array.prototype.slice.call(arguments, 1),
+          channel = this.GetChannel(channelName);
+
+      args.push(channel);
+      
+      this.GetChannel(channelName).Publish(args);
     }
   };
 
