@@ -1,6 +1,6 @@
 Mediator.js
 ===========
-Version 0.5.0
+Version 0.6.0
 For more information, please see 
 [my blog post](http://www.thejacklawson.com/index.php/2011/06/mediators-for-modularized-asynchronous-programming-in-javascript/)
 
