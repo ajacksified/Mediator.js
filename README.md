@@ -32,21 +32,25 @@ args are passed in by the publishing class. Instantiate a new mediator, and
 then you can being subscribing, removing, and publishing.
 
 Subscription signature:
+
     (channel, callback, <options>, <context>);
     Mediator.Publish(channel, <data, data, ... >)
     Mediator.Remove(<channel>) 
 
 Callback signature:
+
     function(<data, data ...>, channel);
     
 
 Mediator.Subscribe options (all are optional; default is empty):
+
     { 
       predicate: function(*args){ return arg1 == arg2; } 
       priority: 0|1|... (array index; max of callback array length, min of 0)
     }
 
 Subscriber object (returned on Mediator.Subscribe):
+
     {
       id, // guid
       fn, // function
@@ -56,6 +60,7 @@ Subscriber object (returned on Mediator.Subscribe):
     }
 
 Examples:
+
     var mediator = new Mediator();
 
     // Alert data when the "message" channel is published to
@@ -95,6 +100,7 @@ As of version 0.4, you can namespace your subscribing / removing / publishing as
     mediator.Remove("application:chat");
 
 You can update Subscriber priority:
+
     var sub = mediator.Subscribe("application:chat", function(data){ ... });
     var sub2 = mediator.Subscribe("application:chat", function(data){ ... });
 
@@ -102,9 +108,11 @@ You can update Subscriber priority:
     mediator.GetChannel("application:chat").SetPriority(sub2.id, 0);
 
 You can update Subscriber callback, context, and/or options:
+
     sub.Update({ fn: ..., context: { }, options: { ... });
 
 You can stop the chain of execution by calling channel.StopPropagation():
+
     // for example, let's not post the message if the from and to are the same
     mediator.Subscribe("application:chat", function(data, channel){
       //something with data

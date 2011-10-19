@@ -1,0 +1,169 @@
+<!DOCTYPE html> <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">      <title>Mediator.js</title>   <style>     body {       font-size: 16px;       line-height: 24px;       background: #fff url("bg.png");       color: #252519;       font-family: "Palatino Linotype", "Book Antiqua", Palatino, FreeSerif, serif;       padding: 0 0 50px 50px;     }     div.container {       width: 720px;       margin: 50px 0 50px 50px;     }     p {       width: 550px;     }       #documentation p {         margin-bottom: 4px;       }     a, a:visited {       padding: 0 2px;       text-decoration: none;       background: #dbe6f3;       color: #3f6fa5;     }     a:active, a:hover {       color: #dbe6f3;       background: #3f6fa5;     }     h1, h2, h3, h4, h5, h6 {       margin-top: 40px;     }     b.header {       font-size: 18px;     }     span.alias {       font-size: 14px;       font-style: italic;       margin-left: 20px;     }     table, tr, td {       margin: 0; padding: 0;     }       td {         padding: 2px 12px 2px 0;       }     ul {       list-style-type: circle;       padding: 0 0 0 20px;     }       li {         width: 500px;         margin-bottom: 10px;       }     code, pre, tt {       font-family: Monaco, Consolas, "Lucida Console", monospace;       font-size: 12px;       line-height: 18px;       color: #555529;     }       code {         margin-left: 20px;       }       pre {         font-size: 12px;         padding: 2px 0 2px 12px;         border-left: 6px solid #aaaa99;         margin: 0px 0 30px;       }   </style> </head> <body>   <h1>Mediator.js</h1>        <em>A light utility class to help implement the Mediator pattern</em>         <h3>Source files:</h3>   <ol>            <li><a href="doc_mediator.html">mediator.js</a></li>        </ol>      <h1>Mediator.js</h1>
+
+<p>Version 0.6.0
+For more information, please see 
+<a href="http://www.thejacklawson.com/index.php/2011/06/mediators-for-modularized-asynchronous-programming-in-javascript/">my blog post</a></p>
+
+<h2>A light utility class to help implement the Mediator pattern to ease asynchronous programming</h2>
+
+<p>Mediator is a simple class that allows you to register, unregister, and call 
+subscriber methods to help event-based, asyncronous programming.  Its purpose 
+is to make the usage of WebSockets, AJAX calls, or any other asynchronous 
+operations easier to maintain and test.</p>
+
+<p><em>&lt;1k bytes, minifed and gzipped</em></p>
+
+<h2>Why?</h2>
+
+<p>My specific use case: bind elements easily for websocket callbacks. But, you
+may find usage in it for all kinds of things: as an event management system,
+to decouple calls between javascript functions, ajax request callbacks, and
+more. There's an excellent article that talks about Mediators more in detail
+by <a href="http://addyosmani.com/largescalejavascript/#mediatorpattern">Addy Osmani</a>
+(that made me go back and refactor this code a bit.)</p>
+
+<h2>Usage</h2>
+
+<p>You can register events with the mediator two ways: using channels, or with a 
+predicate to perform more complex matching. Predicates are run using whatever
+args are passed in by the publishing class. Instantiate a new mediator, and
+then you can being subscribing, removing, and publishing.</p>
+
+<p>Subscription signature:</p>
+
+<pre><code>(channel, callback, &lt;options&gt;, &lt;context&gt;);
+Mediator.Publish(channel, &lt;data, data, ... &gt;)
+Mediator.Remove(&lt;channel&gt;) 
+</code></pre>
+
+<p>Callback signature:</p>
+
+<pre><code>function(&lt;data, data ...&gt;, channel);
+</code></pre>
+
+<p>Mediator.Subscribe options (all are optional; default is empty):</p>
+
+<pre><code>{ 
+  predicate: function(*args){ return arg1 == arg2; } 
+  priority: 0|1|... (array index; max of callback array length, min of 0)
+}
+</code></pre>
+
+<p>Subscriber object (returned on Mediator.Subscribe):</p>
+
+<pre><code>{
+  id, // guid
+  fn, // function
+  options, // options
+  context, // context for fn to be called within
+  Update(options){ ...} // function that accepts { fn, options, context }
+}
+</code></pre>
+
+<p>Examples:</p>
+
+<pre><code>var mediator = new Mediator();
+
+// Alert data when the "message" channel is published to
+// Subscribe returns a "Subscriber" object
+mediator.Subscribe("message", function(data){ alert(data); });
+mediator.Publish("message", "Hello, world");
+
+// Alert the "message" property of the object called when the predicate function returns true (The "From" property is equal to "Jack")
+var predicate = function(data){ return data.From === "Jack" };
+mediator.Subscribe("channel", function(data){ alert(data.Message); }, { predicate: predicate });
+mediator.Publish("channel", { Message: "Hey!", From: "Jack" }); //alerts
+mediator.Publish("channel", { Message: "Hey!", From: "Audrey" }); //doesn't alert
+</code></pre>
+
+<p>You can remove events by passing in a type or predicate, and optionally the 
+function to remove. Predicates and functions must be named- not anonymous- 
+to be able to be removed.</p>
+
+<pre><code>// removes all methods bound to a channel 
+mediator.Remove("channel");
+
+// unregisters *only* MethodFN, a named function, from "channel" 
+mediator.Remove("channel", MethodFN);
+</code></pre>
+
+<p>You can call the registered functions with the Publish method, which accepts 
+an args array:</p>
+
+<pre><code>mediator.Publish("channel", "argument", "another one", { etc: true }); // args go on forever
+</code></pre>
+
+<p>As of version 0.4, you can namespace your subscribing / removing / publishing as such:</p>
+
+<pre><code>mediator.Subscribe("application:chat:receiveMessage", function(data){ ... });
+
+// will recursively call anything in the appllication:chat:receiveMessage namespace 
+mediator.Publish("application:chat:receiveMessage", "Jack Lawson", "Hey");
+
+// will recursively remove everything under application:chat
+mediator.Remove("application:chat");
+</code></pre>
+
+<p>You can update Subscriber priority:</p>
+
+<pre><code>var sub = mediator.Subscribe("application:chat", function(data){ ... });
+var sub2 = mediator.Subscribe("application:chat", function(data){ ... });
+
+// have sub2 executed first
+mediator.GetChannel("application:chat").SetPriority(sub2.id, 0);
+</code></pre>
+
+<p>You can update Subscriber callback, context, and/or options:</p>
+
+<pre><code>sub.Update({ fn: ..., context: { }, options: { ... });
+</code></pre>
+
+<p>You can stop the chain of execution by calling channel.StopPropagation():</p>
+
+<pre><code>// for example, let's not post the message if the from and to are the same
+mediator.Subscribe("application:chat", function(data, channel){
+  //something with data
+  channel.stopPropagation();
+}, options: {
+  predicate: function(data){ return data.From == data.To },
+  priority: 0
+});
+</code></pre>
+
+<h2>Changes from Last Version</h2>
+
+<p>Version 0.6.0
+* Added ability to stop the chain of calls using c.stopPropagation()</p>
+
+<p>Version 0.5.0
+* Added ability to access and update subscribing objects
+  * Subscribers now have a unique ID and can be queried by id or by function
+  * Subscriber class can have its function, context, or options updated
+  * Subscriber priority can be updated post-addition
+  * Channels made public by Mediator.GetChannel
+  * Added a little performance test</p>
+
+<p>Version 0.4.2
+* Added Priority to calls, allowing you to set callback index</p>
+
+<p>Version 0.4.1
+* Minor internal updates</p>
+
+<p>Version 0.4.0
+* Predicate no longer acts as a channel and is moved to an options object
+at the end of the subcription call.
+* Signatures changed; context moved to the end of subscriptions
+* Namespacing for subscription binding</p>
+
+<h2>License</h2>
+
+<p>This class and its accompanying README and are 
+<a href="http://www.opensource.org/licenses/mit-license.php">MIT licensed</a>. </p>
+
+<p>Also uses unmodified <a href="http://pivotal.github.com/jasmine/">Jasmine</a> 
+for testing (MIT licensed as well.)</p>
+
+<h2>In Closing</h2>
+
+<p>Have fun, and please submit suggestions and improvements! You can leave any 
+issues here, or contact me on Twitter (@ajacksified).</p> </body> </html>
