@@ -1,4 +1,4 @@
-<!DOCTYPE html> <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">      <title>Mediator.js</title>   <style>     body {       font-size: 16px;       line-height: 24px;       background: #fff url("bg.png");       color: #252519;       font-family: "Palatino Linotype", "Book Antiqua", Palatino, FreeSerif, serif;       padding: 0 0 50px 50px;     }     div.container {       width: 720px;       margin: 50px 0 50px 50px;     }     p {       width: 550px;     }       #documentation p {         margin-bottom: 4px;       }     a, a:visited {       padding: 0 2px;       text-decoration: none;       background: #dbe6f3;       color: #3f6fa5;     }     a:active, a:hover {       color: #dbe6f3;       background: #3f6fa5;     }     h1, h2, h3, h4, h5, h6 {       margin-top: 40px;     }     b.header {       font-size: 18px;     }     span.alias {       font-size: 14px;       font-style: italic;       margin-left: 20px;     }     table, tr, td {       margin: 0; padding: 0;     }       td {         padding: 2px 12px 2px 0;       }     ul {       list-style-type: circle;       padding: 0 0 0 20px;     }       li {         width: 500px;         margin-bottom: 10px;       }     code, pre, tt {       font-family: Monaco, Consolas, "Lucida Console", monospace;       font-size: 12px;       line-height: 18px;       color: #555529;     }       code {         margin-left: 20px;       }       pre {         font-size: 12px;         padding: 2px 0 2px 12px;         border-left: 6px solid #aaaa99;         margin: 0px 0 30px;       }   </style> </head> <body>   <h1>Mediator.js</h1>        <em>A light utility class to help implement the Mediator pattern</em>         <h3>Source files:</h3>   <ol>            <li><a href="doc_mediator.html">mediator.js</a></li>        </ol>      <h1>Mediator.js</h1>
+<!DOCTYPE html> <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">      <title>Mediator.js</title>   <style>     body {       font-size: 16px;       line-height: 24px;       background: #fff url("bg.png");       color: #252519;       font-family: "Palatino Linotype", "Book Antiqua", Palatino, FreeSerif, serif;       padding: 0 0 50px 50px;     }     div.container {       width: 720px;       margin: 50px 0 50px 50px;     }     p {       width: 550px;     }       #documentation p {         margin-bottom: 4px;       }     a, a:visited {       padding: 0 2px;       text-decoration: none;       background: #dbe6f3;       color: #3f6fa5;     }     a:active, a:hover {       color: #dbe6f3;       background: #3f6fa5;     }     h1, h2, h3, h4, h5, h6 {       margin-top: 40px;       width: 550px;       line-height: 1.25em;     }     b.header {       font-size: 18px;     }     span.alias {       font-size: 14px;       font-style: italic;       margin-left: 20px;     }     table, tr, td {       margin: 0; padding: 0;     }       td {         padding: 2px 12px 2px 0;       }     ul {       list-style-type: circle;       padding: 0 0 0 20px;     }       li {         width: 500px;         margin-bottom: 10px;       }     code, pre, tt {       font-family: Monaco, Consolas, "Lucida Console", monospace;       font-size: 12px;       line-height: 18px;       color: #555529;     }       pre {         font-size: 12px;         padding: 2px 0 2px 12px;         border-left: 6px solid #aaaa99;         margin: 0px 0 30px;       }   </style> </head> <body>   <h1>Mediator.js</h1>        <em>A light utility class to help implement the Mediator pattern</em>         <h3>Source files:</h3>   <ol>            <li><a href="doc_mediator.html">mediator.js</a></li>        </ol>      <h1>Mediator.js</h1>
 
 <p>Version 0.6.0
 For more information, please see 
@@ -33,21 +33,18 @@ then you can being subscribing, removing, and publishing.</p>
 
 <pre><code>(channel, callback, &lt;options&gt;, &lt;context&gt;);
 Mediator.Publish(channel, &lt;data, data, ... &gt;)
-Mediator.Remove(&lt;channel&gt;) 
-</code></pre>
+Mediator.Remove(&lt;channel&gt;) </code></pre>
 
 <p>Callback signature:</p>
 
-<pre><code>function(&lt;data, data ...&gt;, channel);
-</code></pre>
+<pre><code>function(&lt;data, data ...&gt;, channel);</code></pre>
 
 <p>Mediator.Subscribe options (all are optional; default is empty):</p>
 
 <pre><code>{ 
   predicate: function(*args){ return arg1 == arg2; } 
   priority: 0|1|... (array index; max of callback array length, min of 0)
-}
-</code></pre>
+}</code></pre>
 
 <p>Subscriber object (returned on Mediator.Subscribe):</p>
 
@@ -57,8 +54,7 @@ Mediator.Remove(&lt;channel&gt;)
   options, // options
   context, // context for fn to be called within
   Update(options){ ...} // function that accepts { fn, options, context }
-}
-</code></pre>
+}</code></pre>
 
 <p>Examples:</p>
 
@@ -73,8 +69,7 @@ mediator.Publish("message", "Hello, world");
 var predicate = function(data){ return data.From === "Jack" };
 mediator.Subscribe("channel", function(data){ alert(data.Message); }, { predicate: predicate });
 mediator.Publish("channel", { Message: "Hey!", From: "Jack" }); //alerts
-mediator.Publish("channel", { Message: "Hey!", From: "Audrey" }); //doesn't alert
-</code></pre>
+mediator.Publish("channel", { Message: "Hey!", From: "Audrey" }); //doesn't alert</code></pre>
 
 <p>You can remove events by passing in a type or predicate, and optionally the 
 function to remove. Predicates and functions must be named- not anonymous- 
@@ -84,14 +79,12 @@ to be able to be removed.</p>
 mediator.Remove("channel");
 
 // unregisters *only* MethodFN, a named function, from "channel" 
-mediator.Remove("channel", MethodFN);
-</code></pre>
+mediator.Remove("channel", MethodFN);</code></pre>
 
 <p>You can call the registered functions with the Publish method, which accepts 
 an args array:</p>
 
-<pre><code>mediator.Publish("channel", "argument", "another one", { etc: true }); // args go on forever
-</code></pre>
+<pre><code>mediator.Publish("channel", "argument", "another one", { etc: true }); // args go on forever</code></pre>
 
 <p>As of version 0.4, you can namespace your subscribing / removing / publishing as such:</p>
 
@@ -101,8 +94,7 @@ an args array:</p>
 mediator.Publish("application:chat:receiveMessage", "Jack Lawson", "Hey");
 
 // will recursively remove everything under application:chat
-mediator.Remove("application:chat");
-</code></pre>
+mediator.Remove("application:chat");</code></pre>
 
 <p>You can update Subscriber priority:</p>
 
@@ -110,13 +102,11 @@ mediator.Remove("application:chat");
 var sub2 = mediator.Subscribe("application:chat", function(data){ ... });
 
 // have sub2 executed first
-mediator.GetChannel("application:chat").SetPriority(sub2.id, 0);
-</code></pre>
+mediator.GetChannel("application:chat").SetPriority(sub2.id, 0);</code></pre>
 
 <p>You can update Subscriber callback, context, and/or options:</p>
 
-<pre><code>sub.Update({ fn: ..., context: { }, options: { ... });
-</code></pre>
+<pre><code>sub.Update({ fn: ..., context: { }, options: { ... });</code></pre>
 
 <p>You can stop the chain of execution by calling channel.StopPropagation():</p>
 
@@ -127,8 +117,7 @@ mediator.Subscribe("application:chat", function(data, channel){
 }, options: {
   predicate: function(data){ return data.From == data.To },
   priority: 0
-});
-</code></pre>
+});</code></pre>
 
 <h2>Changes from Last Version</h2>
 
