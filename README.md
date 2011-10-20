@@ -4,6 +4,12 @@ Version 0.6.0
 For more information, please see 
 [my blog post](http://www.thejacklawson.com/index.php/2011/06/mediators-for-modularized-asynchronous-programming-in-javascript/)
 
+[View the project on Github](https://github.com/ajacksified/Mediator.js)
+
+[View the documentation](https://ajacksified.github.com/Mediator.js)
+
+Documentation built using [Paige](https://github.com/rthauby/Paige)
+
 A light utility class to help implement the Mediator pattern to ease asynchronous programming
 ---------------------------------------------
 
