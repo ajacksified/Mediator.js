@@ -9,6 +9,12 @@ describe("Channel", function() {
     it("should set its namespace property", function(){
       expect(channel.namespace).toBe("");
     });
+
+    it("should set its namespace property to a given namespace", function(){
+      var namespacedChannel = new Mediator.Channel("test:coffee");
+
+      expect(namespacedChannel.namespace).toBe("test:coffee");
+    });
   });
 
   describe("AddSubscriber", function(){
