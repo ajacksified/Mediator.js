@@ -63,7 +63,7 @@
     if (!this instanceof Channel) {
       return new Channel(namespace);
     }else{
-      this.namespace = namespace;
+      this.namespace = namespace || "";
       this._callbacks = [];
       this._channels = [];
       this.stopped = false;
@@ -86,7 +86,7 @@
         if(options.priority < 0) options.priority = 0;
         if(options.priority > this._callbacks.length) options.priority = this._callbacks.length;
 
-        this._callbacks.splice(options.priority, 1, callback);
+        this._callbacks.splice(options.priority, 0, callback);
       }else{
         this._callbacks.push(callback);
       }
