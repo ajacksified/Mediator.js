@@ -228,20 +228,20 @@
 
     GetChannel: function(namespace){
       var channel = this._channels;
-      var namespaceHeirarchy = namespace.split(':');
+      var namespaceHierarchy = namespace.split(':');
 
       if(namespace === ''){
         return channel;
       }
 
-      if(namespaceHeirarchy.length > 0){
-        for(var i = 0, j = namespaceHeirarchy.length; i < j; i++){
+      if(namespaceHierarchy.length > 0){
+        for(var i = 0, j = namespaceHierarchy.length; i < j; i++){
 
-          if(!channel.HasChannel(namespaceHeirarchy[i])){
-            channel.AddChannel(namespaceHeirarchy[i]);
+          if(!channel.HasChannel(namespaceHierarchy[i])){
+            channel.AddChannel(namespaceHierarchy[i]);
           }
 
-          channel = channel.ReturnChannel(namespaceHeirarchy[i]);
+          channel = channel.ReturnChannel(namespaceHierarchy[i]);
         }
       }
 
