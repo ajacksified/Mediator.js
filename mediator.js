@@ -183,7 +183,7 @@
     Publish: function(data){
       for(var y = 0, x = this._callbacks.length; y < x; y++) {
         if(!this.stopped){
-          var callback = this._callbacks[y];
+          var callback = this._callbacks[y], l;
 
           if(callback.options !== undefined && typeof callback.options.predicate === "function"){
             if(callback.options.predicate.apply(callback.context, data)){
@@ -193,6 +193,9 @@
             callback.fn.apply(callback.context, data);
           }
         }
+
+        l = this._callbacks.length;
+        if(l < x) y--; x = l;
       }
 
       for(var x in this._channels){
