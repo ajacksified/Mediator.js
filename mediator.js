@@ -42,7 +42,6 @@
   };
 
   Subscriber.prototype = {
-
     // Mediator.Update on a subscriber instance can update its function,context,
     // or options object. It takes in an object and looks for fn, context, or
     // options keys.
@@ -56,12 +55,6 @@
             this.channel.SetPriority(this.id, this.options.priority);
         }
       }
-    },
-
-    // Attach a channel to the Subscriber object to easy access
-
-    SetChannel: function(channel){
-      this.channel = channel;
     }
   };
 
@@ -98,7 +91,7 @@
         this._callbacks.push(callback);
       }
 
-      callback.SetChannel(this);
+      callback.channel = this;
 
       return callback;
     },
@@ -177,7 +170,7 @@
 
       for(var y = 0, x = this._callbacks.length; y < x; y++) {
         if(this._callbacks[y].fn == identifier || this._callbacks[y].id == identifier){
-          this._callbacks[y].SetChannel(null);
+          this._callbacks[y].channel = null;
           this._callbacks.splice(y,1);
           x--; y--;
         }
