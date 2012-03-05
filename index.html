@@ -1,8 +1,10 @@
-<!DOCTYPE html> <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">      <title>Mediator.js</title>   <style>     body {       font-size: 16px;       line-height: 24px;       background: #fff url("bg.png");       color: #252519;       font-family: "Palatino Linotype", "Book Antiqua", Palatino, FreeSerif, serif;       padding: 0 0 50px 50px;     }     div.container {       width: 720px;       margin: 50px 0 50px 50px;     }     p {       width: 550px;     }       #documentation p {         margin-bottom: 4px;       }     a, a:visited {       padding: 0 2px;       text-decoration: none;       background: #dbe6f3;       color: #3f6fa5;     }     a:active, a:hover {       color: #dbe6f3;       background: #3f6fa5;     }     h1, h2, h3, h4, h5, h6 {       margin-top: 40px;       width: 550px;       line-height: 1.25em;     }     b.header {       font-size: 18px;     }     span.alias {       font-size: 14px;       font-style: italic;       margin-left: 20px;     }     table, tr, td {       margin: 0; padding: 0;     }       td {         padding: 2px 12px 2px 0;       }     ul {       list-style-type: circle;       padding: 0 0 0 20px;     }       li {         width: 500px;         margin-bottom: 10px;       }     code, pre, tt {       font-family: Monaco, Consolas, "Lucida Console", monospace;       font-size: 12px;       line-height: 18px;       color: #555529;     }       pre {         font-size: 12px;         padding: 2px 0 2px 12px;         border-left: 6px solid #aaaa99;         margin: 0px 0 30px;       }   </style> </head> <body>   <h1>Mediator.js</h1>        <em>A light utility class to help implement the Mediator pattern</em>         <h3>Source files:</h3>   <ol>            <li><a href="doc_mediator.html">mediator.js</a></li>        </ol>      <h1>Mediator.js</h1>
+<!DOCTYPE html> <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">      <title>Mediator.js</title>   <style>     body {       font-size: 16px;       line-height: 24px;       background: #fff url("bg.png");       color: #252519;       font-family: "Palatino Linotype", "Book Antiqua", Palatino, FreeSerif, serif;       padding: 0 0 50px 50px;     }     div.container {       width: 720px;       margin: 50px 0 50px 50px;     }     p {       width: 550px;     }       #documentation p {         margin-bottom: 4px;       }     a, a:visited {       padding: 0 2px;       text-decoration: none;       background: #dbe6f3;       color: #3f6fa5;     }     a:active, a:hover {       color: #dbe6f3;       background: #3f6fa5;     }     h1, h2, h3, h4, h5, h6 {       margin-top: 40px;       width: 550px;       line-height: 1.25em;     }     b.header {       font-size: 18px;     }     span.alias {       font-size: 14px;       font-style: italic;       margin-left: 20px;     }     table, tr, td {       margin: 0; padding: 0;     }       td {         padding: 2px 12px 2px 0;       }     ul {       list-style-type: circle;       padding: 0 0 0 20px;     }       li {         width: 500px;         margin-bottom: 10px;       }     code, pre, tt {       font-family: Monaco, Consolas, "Lucida Console", monospace;       font-size: 12px;       line-height: 18px;       color: #555529;     }       pre {         font-size: 12px;         padding: 2px 0 2px 12px;         border-left: 6px solid #aaaa99;         margin: 0px 0 30px;       }   </style> </head> <body>   <h1>Mediator.js</h1>        <em>A light utility class to help implement the Mediator pattern</em>         <h3>Source files:</h3>   <ol>            <li><a href="mediator.html">mediator.js</a></li>        </ol>      <h1>Mediator.js</h1>
 
-<p>Version 0.6.0
-For more information, please see 
-<a href="http://thejacklawson.com/2011/06/mediators-for-modularized-asynchronous-programming-in-javascript/">my blog post</a></p>
+<p>Version 0.6.1</p>
+
+<p>For more information, please see </p>
+
+<p><a href="http://thejacklawson.com/2011/06/mediators-for-modularized-asynchronous-programming-in-javascript/">my blog post</a></p>
 
 <p><a href="https://github.com/ajacksified/Mediator.js">View the project on Github</a></p>
 
@@ -59,6 +61,7 @@ Mediator.Remove(&lt;channel&gt;) </code></pre>
   fn, // function
   options, // options
   context, // context for fn to be called within
+  channel, // provides a pointer back to its channel
   Update(options){ ...} // function that accepts { fn, options, context }
 }</code></pre>
 
@@ -126,6 +129,12 @@ mediator.Subscribe("application:chat", function(data, channel){
 });</code></pre>
 
 <h2>Changes from Last Version</h2>
+
+<p>Version 0.6.1
+* Cleaned up some typos
+* Save pointer to channel within subscription
+* Save namespace in channel
+* Fixed bugs in SetPriority</p>
 
 <p>Version 0.6.0
 * Added ability to stop the chain of calls using c.stopPropagation()</p>
