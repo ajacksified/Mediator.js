@@ -5,6 +5,12 @@ describe("Channel", function() {
     channel = new Mediator.Channel();
   });
 
+  describe("Initialization", function(){
+    it("should set its namespace property", function(){
+      expect(channel.namespace).toBe("");
+    });
+  });
+
   describe("AddSubscriber", function(){
     it("should add a callback to the collection", function(){
       var spy = jasmine.createSpy("adding a test callback");
@@ -48,6 +54,8 @@ describe("Channel", function() {
       channel.AddSubscriber(spy3);
 
       expect(channel._callbacks[0].fn).toBe(spy2);
+      expect(channel._callbacks[1].fn).toBe(spy);
+      expect(channel._callbacks[2].fn).toBe(spy3);
     });
 
     it("should be able to set arbitrary priority", function(){
@@ -59,7 +67,9 @@ describe("Channel", function() {
       channel.AddSubscriber(spy2);
       channel.AddSubscriber(spy3, { priority: 1 });
 
+      expect(channel._callbacks[0].fn).toBe(spy);
       expect(channel._callbacks[1].fn).toBe(spy3);
+      expect(channel._callbacks[2].fn).toBe(spy2);
     });
 
     it("should be able to change priority after adding it", function(){
@@ -71,9 +81,11 @@ describe("Channel", function() {
       channel.AddSubscriber(spy2, { num: 2 });
       channel.AddSubscriber(spy3, { num: 3 });
 
-      channel.SetPriority(sub.id, 1);
+      channel.SetPriority(sub.id, 2);
 
-      expect(channel._callbacks[1].fn).toBe(spy);
+      expect(channel._callbacks[0].fn).toBe(spy2);
+      expect(channel._callbacks[1].fn).toBe(spy3);
+      expect(channel._callbacks[2].fn).toBe(spy);
 
     });
   });
