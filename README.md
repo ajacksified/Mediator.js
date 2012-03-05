@@ -1,6 +1,6 @@
 Mediator.js
 ===========
-Version 0.6.1
+Version 0.7.0
 
 For more information, please see 
 
