@@ -140,7 +140,7 @@
 
       var sub = this._callbacks[oldIndex],
           firstHalf = this._callbacks.slice(0, oldIndex),
-          lastHalf = this._callbacks.slice(oldIndex+1, this._callbacks.length-oldIndex);
+          lastHalf = this._callbacks.slice(oldIndex+1);
 
       this._callbacks = firstHalf.concat(lastHalf);
       this._callbacks.splice(priority, 0, sub);
