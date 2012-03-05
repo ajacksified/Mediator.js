@@ -63,10 +63,11 @@
   };
 
 
-  function Channel(){
+  function Channel(namespace){
     if (!this instanceof Channel) {
-      return new Channel();
+      return new Channel(namespace);
     }else{
+      this.namespace = namespace;
       this._callbacks = [];
       this._channels = [];
       this.stopped = false;
@@ -147,7 +148,7 @@
     },
 
     AddChannel: function(channel){
-      this._channels[channel] = new Channel();
+      this._channels[channel] = new Channel((this.namespace ? this.namespace + ':' : '') + channel);
     },
 
     HasChannel: function(channel){
@@ -214,7 +215,7 @@
     if (!this instanceof Mediator) {
       return new Mediator();
     }else{
-      this._channels = new Channel();
+      this._channels = new Channel('');
     }
   };
 
