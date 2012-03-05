@@ -1,7 +1,9 @@
 Mediator.js
 ===========
-Version 0.6.0
+Version 0.6.1
+
 For more information, please see 
+
 [my blog post](http://thejacklawson.com/2011/06/mediators-for-modularized-asynchronous-programming-in-javascript/)
 
 [View the project on Github](https://github.com/ajacksified/Mediator.js)
@@ -62,6 +64,7 @@ Subscriber object (returned on Mediator.Subscribe):
       fn, // function
       options, // options
       context, // context for fn to be called within
+      channel, // provides a pointer back to its channel
       Update(options){ ...} // function that accepts { fn, options, context }
     }
 
@@ -130,6 +133,12 @@ You can stop the chain of execution by calling channel.StopPropagation():
 
 Changes from Last Version
 -------------------------
+Version 0.6.1
+* Cleaned up some typos
+* Save pointer to channel within subscription
+* Save namespace in channel
+* Fixed bugs in SetPriority
+
 Version 0.6.0
 * Added ability to stop the chain of calls using c.stopPropagation()
 
