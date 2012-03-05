@@ -1,0 +1,17 @@
+{
+  "name":         "Mediator.js",
+  "version":      "0.7.0",
+  "description":  "Flexible pubsub management.",
+  "keywords":     ["pubsub", "events"],
+  "author":       "Jack Lawson <jlawson@olivinelabs.com>",
+  "respository":  {"type": "git", "url": "git://github.com/ajacksified/Mediator.js.git"},
+  "dependencies": [],
+  "licenses": [{
+    "type" :      "MIT",
+    "url" :       "http://opensource.org/licenses/mit-license.php"
+  }],
+  "engines": {
+    "node" :      ">=0.2.0"
+  },
+  "main" :        "./mediator"
+}

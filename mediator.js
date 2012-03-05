@@ -1,5 +1,5 @@
 /*!
-* Mediator.js Library v0.6.0
+* Mediator.js Library v0.7.0
 * https://github.com/ajacksified/Mediator.js
 *
 * Copyright 2011, Jack Lawson
@@ -11,7 +11,7 @@
 * Last update: Sep 15 2011
 */
 
-(function(){
+(function(root){
 
   // We'll generate guids for class instances for easy referencing later on.
   // Subscriber instances will have an id that can be refernced for quick
@@ -294,8 +294,9 @@
 
   // Finally, expose it all.
 
-  window.Mediator = Mediator;
+  root.Mediator = Mediator;
   Mediator.Channel = Channel;
   Mediator.Subscriber = Subscriber;
-})(window);
+
+})(typeof exports == "undefined" ? window : exports);
 
