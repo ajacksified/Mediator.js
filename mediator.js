@@ -52,6 +52,9 @@
         this.fn = options.fn || this.fn;
         this.context = options.context || this.context;
         this.options = options.options || this.options;
+        if (this.channel && this.options && this.options.priority != undefined) {
+            this.channel.SetPriority(this.id, this.options.priority);
+        }
       }
     },
 
