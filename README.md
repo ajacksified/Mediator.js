@@ -8,7 +8,7 @@ For more information, please see
 
 [View the project on Github](https://github.com/ajacksified/Mediator.js)
 
-[View the documentation](https://ajacksified.github.com/Mediator.js)
+[View the documentation](hhttp://thejacklawson.com/Mediator.js/)
 
 Documentation built using [Paige](https://github.com/rthauby/Paige)
 
