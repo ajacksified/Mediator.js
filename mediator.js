@@ -22,7 +22,7 @@
        return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
     };
     return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
-  }
+  };
 
   // Subscribers are instances of Mediator Channel registrations. We generate
   // an object instance so that it can be updated later on without having to
