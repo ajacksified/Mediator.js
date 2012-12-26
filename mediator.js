@@ -11,7 +11,21 @@
 * Last update: Sep 15 2011
 */
 
-(function(root){
+(function(root, factory) {
+  if (typeof exports === 'function') {
+    // Node/CommonJS
+    exports.Mediator = factory();
+  } else if (typeof define === 'function' && define.amd) {
+    // AMD
+    define([], function() {
+      // export to global too for backward compatiblity
+      return (root.Mediator = factory());
+    });
+  } else {
+    // browser global
+    root.Mediator = factory();
+  }
+})(this, function() {
 
   // We'll generate guids for class instances for easy referencing later on.
   // Subscriber instances will have an id that can be refernced for quick
@@ -294,9 +308,9 @@
 
   // Finally, expose it all.
 
-  root.Mediator = Mediator;
   Mediator.Channel = Channel;
   Mediator.Subscriber = Subscriber;
+  return Mediator;
 
-})(typeof exports == "undefined" ? window : exports);
+});
 
