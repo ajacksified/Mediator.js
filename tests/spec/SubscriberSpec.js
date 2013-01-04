@@ -12,7 +12,7 @@ describe("Mediator", function() {
     it("should update the fn", function(){
       var newFN = function(data){ return data; };
 
-      sub.Update({ fn: newFN });
+      sub.update({ fn: newFN });
       expect(sub.fn).toBe(newFN);
     });
 
@@ -20,14 +20,14 @@ describe("Mediator", function() {
       var newPredicate = function(data){ return data==true; },
           newOptions = { predicate: newPredicate };
 
-      sub.Update({ options: newOptions });
+      sub.update({ options: newOptions });
       expect(sub.options.predicate).toBe(newPredicate);
     });
 
     it("should update the context", function(){
       var newContext = { derp: "herp" };
 
-      sub.Update({ context: newContext });
+      sub.update({ context: newContext });
       expect(sub.context).toBe(newContext);
     });
   });

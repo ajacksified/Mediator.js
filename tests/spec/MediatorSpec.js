@@ -9,8 +9,8 @@ describe("Mediator", function() {
     it("should call a callback for a given channel", function(){
       var spy = jasmine.createSpy("test channel callback");
 
-      mediator.Subscribe("testX", spy);
-      mediator.Publish("testX");
+      mediator.subscribe("testX", spy);
+      mediator.publish("testX");
 
       expect(spy).toHaveBeenCalled();
     });
@@ -18,12 +18,12 @@ describe("Mediator", function() {
     it("should stop propagation if requested", function(){
       var spy = jasmine.createSpy("test channel callback"),
           spy2 = jasmine.createSpy("test channel callback that shouldn't be called"),
-          callback = function(c){ c.StopPropagation(); spy(); },
+          callback = function(c){ c.stopPropagation(); spy(); },
           callback2 = function(){ spy2(); };
 
-      mediator.Subscribe("testX", callback);
-      mediator.Subscribe("testX", callback2);
-      mediator.Publish("testX");
+      mediator.subscribe("testX", callback);
+      mediator.subscribe("testX", callback2);
+      mediator.publish("testX");
 
       expect(spy).toHaveBeenCalled();
       expect(spy2).not.toHaveBeenCalled();
@@ -34,9 +34,9 @@ describe("Mediator", function() {
       var spy = jasmine.createSpy("test channel callback"),
           spy2 = jasmine.createSpy("second test channel callback");
 
-      mediator.Subscribe("test", spy);
-      mediator.Subscribe("test", spy2);
-      mediator.Publish("test");
+      mediator.subscribe("test", spy);
+      mediator.subscribe("test", spy2);
+      mediator.publish("test");
 
       expect(spy).toHaveBeenCalled();
       expect(spy2).toHaveBeenCalled();
@@ -49,10 +49,10 @@ describe("Mediator", function() {
           arg = "arg1",
           arg2 = "arg2";
 
-      mediator.Subscribe(channel, spy);
-      mediator.Publish(channel, arg, arg2);
+      mediator.subscribe(channel, spy);
+      mediator.publish(channel, arg, arg2);
 
-      expect(spy).toHaveBeenCalledWith(arg, arg2, mediator.GetChannel(channel));
+      expect(spy).toHaveBeenCalledWith(arg, arg2, mediator.getChannel(channel));
     });
 
     it("should call all matching predicates", function(){
@@ -68,11 +68,11 @@ describe("Mediator", function() {
         return data[0] == "Y";
       }
 
-      mediator.Subscribe("test", spy, { predicate: predicate });
-      mediator.Subscribe("test", spy2, { predicate: predicate2 });
-      mediator.Subscribe("test", spy3);
+      mediator.subscribe("test", spy, { predicate: predicate });
+      mediator.subscribe("test", spy2, { predicate: predicate2 });
+      mediator.subscribe("test", spy3);
 
-      mediator.Publish("test", "Test");
+      mediator.publish("test", "Test");
 
       expect(spy).toHaveBeenCalled();
       expect(spy2).not.toHaveBeenCalled();
@@ -84,9 +84,9 @@ describe("Mediator", function() {
     it("should remove callbacks for a given channel", function(){
       var spy = jasmine.createSpy("test channel callback");
 
-      mediator.Subscribe("test", spy);
-      mediator.Remove("test");
-      mediator.Publish("test");
+      mediator.subscribe("test", spy);
+      mediator.remove("test");
+      mediator.publish("test");
       
       expect(spy).not.toHaveBeenCalled();
     });
@@ -95,10 +95,10 @@ describe("Mediator", function() {
       var spy = jasmine.createSpy("test channel callback"),
           spy2 = jasmine.createSpy("second test channel callback");
 
-      mediator.Subscribe("test", spy);
-      mediator.Subscribe("test", spy2);
-      mediator.Remove("test", spy);
-      mediator.Publish("test");
+      mediator.subscribe("test", spy);
+      mediator.subscribe("test", spy2);
+      mediator.remove("test", spy);
+      mediator.publish("test");
       
       expect(spy).not.toHaveBeenCalled();
       expect(spy2).toHaveBeenCalled();
@@ -110,11 +110,11 @@ describe("Mediator", function() {
       var spy = jasmine.createSpy("test channel callback"),
           newPredicate = function(data){ return data; };
 
-      var sub = mediator.Subscribe("test", spy),
+      var sub = mediator.subscribe("test", spy),
           subId = sub.id;
 
-      var subThatIReallyGotLater = mediator.GetSubscriber(subId, "test");
-      subThatIReallyGotLater.Update({ options: { predicate: newPredicate } });
+      var subThatIReallyGotLater = mediator.getSubscriber(subId, "test");
+      subThatIReallyGotLater.update({ options: { predicate: newPredicate } });
       expect(subThatIReallyGotLater.options.predicate).toBe(newPredicate);
     });
 
@@ -122,10 +122,10 @@ describe("Mediator", function() {
       var spy = jasmine.createSpy("test channel callback"),
           newPredicate = function(data){ return data; };
 
-      var sub = mediator.Subscribe("test", spy);
+      var sub = mediator.subscribe("test", spy);
 
-      var subThatIReallyGotLater = mediator.GetSubscriber(spy, "test");
-      subThatIReallyGotLater.Update({ options: { predicate: newPredicate } });
+      var subThatIReallyGotLater = mediator.getSubscriber(spy, "test");
+      subThatIReallyGotLater.update({ options: { predicate: newPredicate } });
       expect(subThatIReallyGotLater.options.predicate).toBe(newPredicate);
     });
   });
@@ -135,10 +135,10 @@ describe("Mediator", function() {
       var spy = jasmine.createSpy("test channel callback");
       var spy2 = jasmine.createSpy("second test channel callback");
 
-      mediator.Subscribe("test:channel", spy);
-      mediator.Subscribe("test", spy2);
+      mediator.subscribe("test:channel", spy);
+      mediator.subscribe("test", spy2);
 
-      mediator.Publish("test:channel");
+      mediator.publish("test:channel");
 
       expect(spy).toHaveBeenCalled();
       expect(spy2).toHaveBeenCalled();
@@ -148,10 +148,10 @@ describe("Mediator", function() {
       var spy = jasmine.createSpy("test channel callback");
       var spy2 = jasmine.createSpy("second test channel callback");
 
-      mediator.Subscribe("test", spy);
-      mediator.Subscribe("derp", spy2);
+      mediator.subscribe("test", spy);
+      mediator.subscribe("derp", spy2);
 
-      mediator.Publish("test");
+      mediator.publish("test");
 
       expect(spy).toHaveBeenCalled();
       expect(spy2).not.toHaveBeenCalled();
@@ -161,12 +161,12 @@ describe("Mediator", function() {
       var spy = jasmine.createSpy("inner test channel callback"),
           spy2 = jasmine.createSpy("outermost channel callback");
 
-      mediator.Subscribe("test:test1", spy);
-      mediator.Subscribe("test", spy2);
+      mediator.subscribe("test:test1", spy);
+      mediator.subscribe("test", spy2);
 
-      mediator.Remove("test:test1");
+      mediator.remove("test:test1");
 
-      mediator.Publish("test:test1");
+      mediator.publish("test:test1");
 
       expect(spy).not.toHaveBeenCalled();
       expect(spy2).toHaveBeenCalled();
@@ -176,10 +176,10 @@ describe("Mediator", function() {
       var spy = jasmine.createSpy("inner test channel callback"),
           spy2 = jasmine.createSpy("outermost channel callback");
 
-      mediator.Subscribe("test:test1:test2", spy);
-      mediator.Subscribe("test", spy2);
+      mediator.subscribe("test:test1:test2", spy);
+      mediator.subscribe("test", spy2);
 
-      mediator.Publish("test:test1", "data");
+      mediator.publish("test:test1", "data");
 
       expect(spy).not.toHaveBeenCalled();
       expect(spy2).toHaveBeenCalled();
