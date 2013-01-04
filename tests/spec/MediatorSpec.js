@@ -118,18 +118,6 @@ describe("Mediator", function() {
       expect(subThatIReallyGotLater.options.predicate).toBe(newPredicate);
     });
 
-    it("should find callback by identifier recursively, then update", function(){
-      var spy = jasmine.createSpy("test channel callback"),
-          newPredicate = function(data){ return data; };
-
-      var sub = mediator.Subscribe("test:deeper", spy),
-          subId = sub.id;
-
-      var subThatIReallyGotLater = mediator.GetSubscriber(subId);
-      subThatIReallyGotLater.Update({ options: { predicate: newPredicate } });
-      expect(subThatIReallyGotLater.options.predicate).toBe(newPredicate);
-    });
-
     it("should update callback by fn", function(){
       var spy = jasmine.createSpy("test channel callback"),
           newPredicate = function(data){ return data; };
@@ -148,8 +136,9 @@ describe("Mediator", function() {
       var spy2 = jasmine.createSpy("second test channel callback");
 
       mediator.Subscribe("test:channel", spy);
-      mediator.Subscribe("test:channel2", spy2);
-      mediator.Publish("test");
+      mediator.Subscribe("test", spy2);
+
+      mediator.Publish("test:channel");
 
       expect(spy).toHaveBeenCalled();
       expect(spy2).toHaveBeenCalled();
@@ -159,8 +148,9 @@ describe("Mediator", function() {
       var spy = jasmine.createSpy("test channel callback");
       var spy2 = jasmine.createSpy("second test channel callback");
 
-      mediator.Subscribe("test:channel", spy);
-      mediator.Subscribe("derp:channel2", spy2);
+      mediator.Subscribe("test", spy);
+      mediator.Subscribe("derp", spy2);
+
       mediator.Publish("test");
 
       expect(spy).toHaveBeenCalled();
@@ -171,12 +161,12 @@ describe("Mediator", function() {
       var spy = jasmine.createSpy("inner test channel callback"),
           spy2 = jasmine.createSpy("outermost channel callback");
 
-      mediator.Subscribe("test:test1:test2", spy);
+      mediator.Subscribe("test:test1", spy);
       mediator.Subscribe("test", spy2);
 
       mediator.Remove("test:test1");
 
-      mediator.Publish("test");
+      mediator.Publish("test:test1");
 
       expect(spy).not.toHaveBeenCalled();
       expect(spy2).toHaveBeenCalled();
@@ -191,8 +181,8 @@ describe("Mediator", function() {
 
       mediator.Publish("test:test1", "data");
 
-      expect(spy).toHaveBeenCalled();
-      expect(spy2).not.toHaveBeenCalled();
+      expect(spy).not.toHaveBeenCalled();
+      expect(spy2).toHaveBeenCalled();
 
     });
 

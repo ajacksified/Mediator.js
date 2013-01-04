@@ -168,9 +168,9 @@ describe("Channel", function() {
 
     it("should remove matching callbacks a valid id is given", function(){
       var spy = jasmine.createSpy("adding a test callback"),
-          spy2 = jasmine.createSpy("adding a second test callback");
+          spy2 = jasmine.createSpy("adding a second test callback"),
+          sub = channel.AddSubscriber(spy);
 
-      var sub = channel.AddSubscriber(spy);
       channel.AddSubscriber(spy2);
       expect(channel._callbacks.length).toBe(2);
 
@@ -194,7 +194,7 @@ describe("Channel", function() {
 
     it("should do nothing if a non-matching fn is given", function(){
       var spy = jasmine.createSpy("adding a test callback"),
-        spy2 = jasmine.createSpy("adding another test callback");
+          spy2 = jasmine.createSpy("adding another test callback");
 
       channel.AddSubscriber(spy);
       expect(channel._callbacks.length).toBe(1);
@@ -235,18 +235,21 @@ describe("Channel", function() {
 
       expect(spy).toHaveBeenCalled();
     });
-    
-    it("should call all matching for nested channels", function(){
+
+    it("should call all matching for parent channels", function(){
       var channelName = "test",
-          spy = jasmine.createSpy("inner function"),
+          spy = jasmine.createSpy("outer function"),
+          spy2 = jasmine.createSpy("inner function"),
           data = ["data"];
 
+      channel.AddSubscriber(spy);
       channel.AddChannel(channelName);
-      channel._channels[channelName].AddSubscriber(spy);
+      channel._channels[channelName].AddSubscriber(spy2);
 
-      channel.Publish(data);
+      channel._channels[channelName].Publish(data);
 
       expect(spy).toHaveBeenCalledWith(data[0]);
+      expect(spy2).toHaveBeenCalledWith(data[0]);
     });
   });
 });

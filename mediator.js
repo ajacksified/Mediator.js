@@ -35,6 +35,7 @@
     var S4 = function() {
        return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
     };
+
     return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
   };
 
@@ -45,7 +46,7 @@
 
   function Subscriber(fn, options, context){
     if (!this instanceof Subscriber) {
-      return new Subscriber(fn, context, options);
+      return new Subscriber(fn, options, context);
     }else{
       this.id = guidGenerator();
       this.fn = fn;
@@ -73,13 +74,14 @@
   };
 
 
-  function Channel(namespace){
+  function Channel(namespace, parent){
     if (!this instanceof Channel) {
       return new Channel(namespace);
     }else{
       this.namespace = namespace || "";
       this._callbacks = [];
       this._channels = [];
+      this._parent = parent;
       this.stopped = false;
     }
   };
@@ -98,7 +100,7 @@
         options.priority = options.priority >> 0;
 
         if(options.priority < 0) options.priority = 0;
-        if(options.priority > this._callbacks.length) options.priority = this._callbacks.length;
+        if(options.priority >= this._callbacks.length) options.priority = this._callbacks.length-1;
 
         this._callbacks.splice(options.priority, 0, callback);
       }else{
@@ -118,18 +120,12 @@
     },
 
     GetSubscriber: function(identifier){
-      for(var x = 0, y = this._callbacks.length; x < y; x++){
+      var x = 0,
+          sub, z;
+
+      for(x = 0, y = this._callbacks.length; x < y; x++){
         if(this._callbacks[x].id == identifier || this._callbacks[x].fn == identifier){
           return this._callbacks[x];
-        }
-      }
-
-      for(var z in this._channels){
-        if(this._channels.hasOwnProperty(z)){
-          var sub = this._channels[z].GetSubscriber(identifier);
-          if(sub !== undefined){
-            return sub;
-          }
         }
       }
     },
@@ -139,26 +135,27 @@
     // an array index. It will not search recursively through subchannels.
 
     SetPriority: function(identifier, priority){
-      var oldIndex = 0;
+      var oldIndex = 0,
+          x = 0,
+          sub, firstHalf, lastHalf;
 
-      for(var x = 0, y = this._callbacks.length; x < y; x++){
+      for(x = 0, y = this._callbacks.length; x < y; x++){
         if(this._callbacks[x].id == identifier || this._callbacks[x].fn == identifier){
           break;
         }
         oldIndex ++;
       }
 
-      var sub = this._callbacks[oldIndex],
-          firstHalf = this._callbacks.slice(0, oldIndex),
-          lastHalf = this._callbacks.slice(oldIndex+1);
+      sub = this._callbacks[oldIndex];
+      firstHalf = this._callbacks.slice(0, oldIndex);
+      lastHalf = this._callbacks.slice(oldIndex+1);
 
       this._callbacks = firstHalf.concat(lastHalf);
       this._callbacks.splice(priority, 0, sub);
-
     },
 
     AddChannel: function(channel){
-      this._channels[channel] = new Channel((this.namespace ? this.namespace + ':' : '') + channel);
+      this._channels[channel] = new Channel((this.namespace ? this.namespace + ':' : '') + channel, this);
     },
 
     HasChannel: function(channel){
@@ -172,21 +169,25 @@
     // This will remove a subscriber recursively through its subchannels.
 
     RemoveSubscriber: function(identifier){
+      var y = 0,
+          x, z;
+
       if(!identifier){
         this._callbacks = [];
 
-        for(var z in this._channels){
+        for(z in this._channels){
           if(this._channels.hasOwnProperty(z)){
             this._channels[z].RemoveSubscriber(identifier);
           }
         }
       }
 
-      for(var y = 0, x = this._callbacks.length; y < x; y++) {
+      for(y = 0, x = this._callbacks.length; y < x; y++) {
         if(this._callbacks[y].fn == identifier || this._callbacks[y].id == identifier){
           this._callbacks[y].channel = null;
           this._callbacks.splice(y,1);
-          x--; y--;
+          x--;
+          y--;
         }
       }
     },
@@ -195,9 +196,11 @@
     // through its subchannels.
 
     Publish: function(data){
-      for(var y = 0, x = this._callbacks.length; y < x; y++) {
+      var y = 0, x, callback, l;
+
+      for(y = 0, x = this._callbacks.length; y < x; y++) {
         if(!this.stopped){
-          var callback = this._callbacks[y], l;
+          callback = this._callbacks[y];
 
           if(callback.options !== undefined && typeof callback.options.predicate === "function"){
             if(callback.options.predicate.apply(callback.context, data)){
@@ -212,12 +215,8 @@
         if(l < x) y--; x = l;
       }
 
-      for(var x in this._channels){
-        if(!this.stopped){
-          if(this._channels.hasOwnProperty(x)){
-            this._channels[x].Publish(data);
-          }
-        }
+      if(this._parent){
+        this._parent.Publish(data);
       }
 
       this.stopped = false;
@@ -241,15 +240,16 @@
     // application:chat:message:received
 
     GetChannel: function(namespace){
-      var channel = this._channels;
-      var namespaceHierarchy = namespace.split(':');
+      var channel = this._channels,
+          namespaceHierarchy = namespace.split(':'),
+          i;
 
       if(namespace === ''){
         return channel;
       }
 
       if(namespaceHierarchy.length > 0){
-        for(var i = 0, j = namespaceHierarchy.length; i < j; i++){
+        for(i = 0, j = namespaceHierarchy.length; i < j; i++){
 
           if(!channel.HasChannel(namespaceHierarchy[i])){
             channel.AddChannel(namespaceHierarchy[i]);
