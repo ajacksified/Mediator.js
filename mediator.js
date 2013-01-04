@@ -1,5 +1,5 @@
 /*!
-* Mediator.js Library v0.7.0
+* Mediator.js Library v0.9.0
 * https://github.com/ajacksified/Mediator.js
 *
 * Copyright 2013, Jack Lawson
@@ -121,7 +121,7 @@
 
     getSubscriber: function(identifier){
       var x = 0,
-          sub, z;
+          sub, y, z;
 
       for(x = 0, y = this._callbacks.length; x < y; x++){
         if(this._callbacks[x].id == identifier || this._callbacks[x].fn == identifier){
@@ -137,7 +137,7 @@
     setPriority: function(identifier, priority){
       var oldIndex = 0,
           x = 0,
-          sub, firstHalf, lastHalf;
+          sub, firstHalf, lastHalf, y;
 
       for(x = 0, y = this._callbacks.length; x < y; x++){
         if(this._callbacks[x].id == identifier || this._callbacks[x].fn == identifier){
@@ -242,20 +242,20 @@
     getChannel: function(namespace){
       var channel = this._channels,
           namespaceHierarchy = namespace.split(':'),
-          i;
+          x, y;
 
       if(namespace === ''){
         return channel;
       }
 
       if(namespaceHierarchy.length > 0){
-        for(i = 0, j = namespaceHierarchy.length; i < j; i++){
+        for(x = 0, y = namespaceHierarchy.length; x < y; x++){
 
-          if(!channel.hasChannel(namespaceHierarchy[i])){
-            channel.addChannel(namespaceHierarchy[i]);
+          if(!channel.hasChannel(namespaceHierarchy[x])){
+            channel.addChannel(namespaceHierarchy[x]);
           }
 
-          channel = channel.returnChannel(namespaceHierarchy[i]);
+          channel = channel.returnChannel(namespaceHierarchy[x]);
         }
       }
 

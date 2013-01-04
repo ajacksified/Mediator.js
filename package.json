@@ -12,6 +12,13 @@
     "url": "git://github.com/ajacksified/Mediator.js.git"
   },
   "dependencies": {},
+  "devDependencies": {
+    "mocha": "1.7.x",
+    "chai": "1.4.x",
+    "sinon": "1.5.x",
+    "sinon-mocha": "1.5.x",
+    "sinon-chai": "2.3.0"
+  },
   "licenses": [
     {
       "type": "MIT",
@@ -28,7 +35,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: run Jasmine tests in ./tests folder\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
