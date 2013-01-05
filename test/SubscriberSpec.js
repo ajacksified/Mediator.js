@@ -1,4 +1,5 @@
-var Mediator = require("../mediator").Mediator,
+var libpath = process.env['MEDIATOR_JS_COV'] ? '../lib-cov' : '../lib'
+    Mediator = require(libpath + "/mediator").Mediator,
     sinon = require('sinon'),
     chai = require('chai'),
     expect = require('chai').expect,
@@ -15,6 +16,14 @@ describe("Mediator", function() {
 
   beforeEach(function() {
     sub = new Mediator.Subscriber(originalFN, originalOptions, originalContext);
+  });
+
+  describe("initializing", function(){
+    it("should act like a constructor when called like a function", function(){
+      var fnSubscriber = Mediator.Subscriber("name");
+
+      expect(fnSubscriber).not.to.be.undefined;
+    });
   });
 
   describe("updating", function(){

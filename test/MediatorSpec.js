@@ -1,4 +1,5 @@
-var Mediator = require("../mediator").Mediator,
+var libpath = process.env['MEDIATOR_JS_COV'] ? '../lib-cov' : '../lib'
+    Mediator = require(libpath + "/mediator").Mediator,
     sinon = require('sinon'),
     chai = require('chai'),
     expect = require('chai').expect,
@@ -14,8 +15,47 @@ describe("Mediator", function() {
     mediator = new Mediator();
   });
 
+  describe("initializing", function(){
+    it("should act like a constructor when called like a function", function(){
+      var fnMediator = Mediator();
+      expect(fnMediator).not.to.be.undefined;
+    });
+
+    it("should start with a channel", function(){
+      expect(mediator.getChannel('')).not.to.be.undefined;
+    });
+  });
+
+  describe("subscribing", function(){
+    it("should subscribe to a given channel", function(){
+      var spy = sinon.spy();
+      mediator.subscribe("test", spy);
+      expect(mediator.getChannel("test")._subscribers.length).to.equal(1);
+    });
+
+    it("should bind 'once'", function(){
+      var spy = sinon.spy();
+      mediator.once("test", spy);
+      mediator.publish("test");
+      mediator.publish("test");
+
+      expect(spy).calledOnce;
+    });
+
+    it("should bind with arbitrary number of calls", function(){
+      var spy = sinon.spy(), i;
+      mediator.subscribe("test", spy, { calls: 3 });
+
+      for(i = 0; i < 5; i++){
+        mediator.publish("test");
+      }
+
+      expect(spy).calledThrice;
+    });
+  });
+
   describe("publishing", function(){
-    it("should call a callback for a given channel", function(){
+    it("should call a subscriber for a given channel", function(){
       var spy = sinon.spy();
 
       mediator.subscribe("testX", spy);
@@ -27,11 +67,11 @@ describe("Mediator", function() {
     it("should stop propagation if requested", function(){
       var spy = sinon.spy(),
           spy2 = sinon.spy(),
-          callback = function(c){ c.stopPropagation(); spy(); },
-          callback2 = function(){ spy2(); };
+          subscriber = function(c){ c.stopPropagation(); spy(); },
+          subscriber2 = function(){ spy2(); };
 
-      mediator.subscribe("testX", callback);
-      mediator.subscribe("testX", callback2);
+      mediator.subscribe("testX", subscriber);
+      mediator.subscribe("testX", subscriber2);
       mediator.publish("testX");
 
       expect(spy).called;
@@ -39,7 +79,7 @@ describe("Mediator", function() {
     });
 
 
-    it("should call callbacks for all functions in a given channel", function(){
+    it("should call subscribers for all functions in a given channel", function(){
       var spy = sinon.spy(),
           spy2 = sinon.spy();
 
@@ -86,10 +126,11 @@ describe("Mediator", function() {
       expect(spy2).not.called;
       expect(spy3).called;
     });
+
   });
 
   describe("removing", function(){
-    it("should remove callbacks for a given channel", function(){
+    it("should remove subscribers for a given channel", function(){
       var spy = sinon.spy();
 
       mediator.subscribe("test", spy);
@@ -99,7 +140,7 @@ describe("Mediator", function() {
       expect(spy).not.called;
     });
 
-    it("should remove callbacks for a given channel / named function pair", function(){
+    it("should remove subscribers for a given channel / named function pair", function(){
       var spy = sinon.spy(),
           spy2 = sinon.spy();
 
@@ -114,7 +155,7 @@ describe("Mediator", function() {
   });
 
   describe("updating", function(){
-    it("should update callback by identifier", function(){
+    it("should update subscriber by identifier", function(){
       var spy = sinon.spy(),
           newPredicate = function(data){ return data; };
 
@@ -126,7 +167,19 @@ describe("Mediator", function() {
       expect(subThatIReallyGotLater.options.predicate).to.equal(newPredicate);
     });
 
-    it("should update callback by fn", function(){
+    it("should update subscriber priority by identifier", function(){
+      var spy = sinon.spy(),
+          spy2 = sinon.spy(),
+          sub = mediator.subscribe("test", spy),
+          sub2 = mediator.subscribe("test", spy2);
+
+      sub2.update({ options: { priority: 0 } });
+
+      expect(mediator.getChannel("test")._subscribers[0].id).to.equal(sub2.id);
+      expect(mediator.getChannel("test")._subscribers[1].id).to.equal(sub.id);
+    });
+
+    it("should update subscriber by fn", function(){
       var spy = sinon.spy(),
           newPredicate = function(data){ return data; };
 
@@ -139,6 +192,12 @@ describe("Mediator", function() {
   });
 
   describe("namespaces", function(){
+    it("should make subchannels", function(){
+      var spy = sinon.spy();
+      mediator.subscribe("test:subchannel", spy);
+      expect(mediator.getChannel("test")._channels["subchannel"]._subscribers.length).to.equal(1);
+    });
+
     it("should call all functions within a given channel namespace", function(){
       var spy = sinon.spy();
       var spy2 = sinon.spy();
@@ -191,6 +250,51 @@ describe("Mediator", function() {
 
       expect(spy).not.called;
       expect(spy2).called;
+    });
+  });
+
+  describe("aliases", function(){
+    it("should alias 'on' and 'bind'", function(){
+      var spy = sinon.spy();
+
+      mediator.on("test", spy);
+      mediator.bind("test", spy);
+      mediator.publish("test");
+
+      expect(spy).calledTwice;
+    });
+
+    it("should alias 'emit' and 'trigger'", function(){
+      var spy = sinon.spy();
+
+      mediator.subscribe("test", spy);
+
+      mediator.emit("test");
+      mediator.trigger("test");
+
+      expect(spy).calledTwice;
+    });
+
+    it("should alias 'off' for subscriptions", function(){
+      var spy = sinon.spy(),
+          sub;
+
+      sub = mediator.subscribe("test", spy);
+      mediator.off("test", sub.id);
+
+      mediator.publish("test");
+      expect(spy).not.called;
+    });
+
+    it("should alias 'off' for channels", function(){
+      var spy = sinon.spy(),
+          sub;
+
+      sub = mediator.subscribe("test", spy);
+      mediator.off("test");
+
+      mediator.publish("test");
+      expect(spy).not.called;
     });
   });
 });

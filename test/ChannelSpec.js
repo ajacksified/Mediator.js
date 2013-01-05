@@ -1,4 +1,5 @@
-var Mediator = require("../mediator").Mediator,
+var libpath = process.env['MEDIATOR_JS_COV'] ? '../lib-cov' : '../lib'
+    Mediator = require(libpath + "/mediator").Mediator,
     sinon = require('sinon'),
     chai = require('chai'),
     expect = require('chai').expect,
@@ -21,42 +22,47 @@ describe("Channel", function() {
 
     it("should set its namespace property to a given namespace", function(){
       var namespacedChannel = new Mediator.Channel("test:coffee");
-
       expect(namespacedChannel.namespace).to.equal("test:coffee");
+    });
+
+    it("should act like a constructor when called like a function", function(){
+      var fnChannel = Mediator.Channel("name");
+
+      expect(fnChannel).not.to.be.undefined;
     });
   });
 
   describe("addSubscriber", function(){
-    it("should add a callback to the collection", function(){
+    it("should add a subscriber to the collection", function(){
       var spy = sinon.spy();
       channel.addSubscriber(spy);
 
-      expect(channel._callbacks.length).to.equal(1);
+      expect(channel._subscribers.length).to.equal(1);
     });
 
-    it("should give callbacks an id", function(){
+    it("should give subscribers an id", function(){
       var spy = sinon.spy();
       channel.addSubscriber(spy);
 
-      expect(channel._callbacks[0].id).to.not.be.undefined;
-      expect(channel._callbacks[0].id).to.not.equal('');
+      expect(channel._subscribers[0].id).to.not.be.undefined;
+      expect(channel._subscribers[0].id).to.not.equal('');
     });
 
-    it("should add a callback to the collection with context", function(){
+    it("should add a subscriber to the collection with context", function(){
       var spy = sinon.spy(),
           contextObj = { derp: "herp" };
 
       channel.addSubscriber(spy, {}, contextObj);
-      expect(channel._callbacks[0].context).to.equal(contextObj);
+      expect(channel._subscribers[0].context).to.equal(contextObj);
     });
 
-    it("should add a callback to the collection with options", function(){
+    it("should add a subscriber to the collection with options", function(){
       var spy = sinon.spy(),
           contextObj = {},
           optionsObj = { derp: "herp" };
 
       channel.addSubscriber(spy, optionsObj, contextObj);
-      expect(channel._callbacks[0].options).to.equal(optionsObj);
+      expect(channel._subscribers[0].options).to.equal(optionsObj);
     });
 
     it("should be able to set top priority", function(){
@@ -65,12 +71,12 @@ describe("Channel", function() {
           spy3 = sinon.spy();
 
       channel.addSubscriber(spy);
-      channel.addSubscriber(spy2, { priority: 0 });
-      channel.addSubscriber(spy3);
+      channel.addSubscriber(spy2);
+      channel.addSubscriber(spy3, { priority: 1 });
 
-      expect(channel._callbacks[0].fn).to.equal(spy2);
-      expect(channel._callbacks[1].fn).to.equal(spy);
-      expect(channel._callbacks[2].fn).to.equal(spy3);
+      expect(channel._subscribers[0].fn).to.equal(spy);
+      expect(channel._subscribers[1].fn).to.equal(spy3);
+      expect(channel._subscribers[2].fn).to.equal(spy2);
     });
 
     it("should be able to set arbitrary priority", function(){
@@ -82,9 +88,9 @@ describe("Channel", function() {
       channel.addSubscriber(spy2);
       channel.addSubscriber(spy3, { priority: 1 });
 
-      expect(channel._callbacks[0].fn).to.equal(spy);
-      expect(channel._callbacks[1].fn).to.equal(spy3);
-      expect(channel._callbacks[2].fn).to.equal(spy2);
+      expect(channel._subscribers[0].fn).to.equal(spy);
+      expect(channel._subscribers[1].fn).to.equal(spy3);
+      expect(channel._subscribers[2].fn).to.equal(spy2);
     });
 
     it("should be able to change priority after adding it", function(){
@@ -98,19 +104,19 @@ describe("Channel", function() {
 
       channel.setPriority(sub.id, 2);
 
-      expect(channel._callbacks[0].fn).to.equal(spy2);
-      expect(channel._callbacks[1].fn).to.equal(spy3);
-      expect(channel._callbacks[2].fn).to.equal(spy);
+      expect(channel._subscribers[0].fn).to.equal(spy2);
+      expect(channel._subscribers[1].fn).to.equal(spy3);
+      expect(channel._subscribers[2].fn).to.equal(spy);
 
     });
   });
 
   describe("GetSubscriber", function(){
-    it("should get a callback by its id", function(){
+    it("should get a subscriber by its id", function(){
       var spy = sinon.spy();
       channel.addSubscriber(spy);
 
-      expect(channel.getSubscriber(channel._callbacks[0].id)).to.not.be.undefined;
+      expect(channel.getSubscriber(channel._subscribers[0].id)).to.not.be.undefined;
     });
   });
 
@@ -152,40 +158,40 @@ describe("Channel", function() {
   });
 
   describe("removeSubscriber", function(){
-    it("should remove callbacks if no fn is given", function(){
+    it("should remove subscribers if no fn is given", function(){
       var spy = sinon.spy();
 
       channel.addSubscriber(spy);
-      expect(channel._callbacks.length).to.equal(1);
+      expect(channel._subscribers.length).to.equal(1);
 
       channel.removeSubscriber();
-      expect(channel._callbacks.length).to.equal(0);
+      expect(channel._subscribers.length).to.equal(0);
     });
 
-    it("should remove matching callbacks a valid fn is given", function(){
+    it("should remove matching subscribers a valid fn is given", function(){
       var spy = sinon.spy(),
           spy2 = sinon.spy();
 
       channel.addSubscriber(spy);
       channel.addSubscriber(spy2);
-      expect(channel._callbacks.length).to.equal(2);
+      expect(channel._subscribers.length).to.equal(2);
 
       channel.removeSubscriber(spy);
-      expect(channel._callbacks.length).to.equal(1);
-      expect(channel._callbacks[0].fn).to.equal(spy2);
+      expect(channel._subscribers.length).to.equal(1);
+      expect(channel._subscribers[0].fn).to.equal(spy2);
     });
 
-    it("should remove matching callbacks a valid id is given", function(){
+    it("should remove matching subscribers a valid id is given", function(){
       var spy = sinon.spy(),
           spy2 = sinon.spy(),
           sub = channel.addSubscriber(spy);
 
       channel.addSubscriber(spy2);
-      expect(channel._callbacks.length).to.equal(2);
+      expect(channel._subscribers.length).to.equal(2);
 
       channel.removeSubscriber(sub.id);
-      expect(channel._callbacks.length).to.equal(1);
-      expect(channel._callbacks[0].fn).to.equal(spy2);
+      expect(channel._subscribers.length).to.equal(1);
+      expect(channel._subscribers[0].fn).to.equal(spy2);
     });
 
 
@@ -195,10 +201,10 @@ describe("Channel", function() {
 
       channel.addSubscriber(spy);
       channel.addSubscriber(function() {});
-      expect(channel._callbacks.length).to.equal(2);
+      expect(channel._subscribers.length).to.equal(2);
 
       channel.removeSubscriber(invalidFn);
-      expect(channel._callbacks.length).to.equal(2);
+      expect(channel._subscribers.length).to.equal(2);
     });
 
     it("should do nothing if a non-matching fn is given", function(){
@@ -206,16 +212,16 @@ describe("Channel", function() {
           spy2 = sinon.spy();
 
       channel.addSubscriber(spy);
-      expect(channel._callbacks.length).to.equal(1);
+      expect(channel._subscribers.length).to.equal(1);
 
       channel.removeSubscriber(spy2);
-      expect(channel._callbacks.length).to.equal(1);
+      expect(channel._subscribers.length).to.equal(1);
     });
   });
 
 
   describe("publish", function(){
-    it("should call all matching callbacks", function(){
+    it("should call all matching subscribers", function(){
       var spy = sinon.spy(),
           data = ["data"];
 
@@ -225,7 +231,7 @@ describe("Channel", function() {
       expect(spy).calledWith(data[0]);
     });
 
-    it("should call all matching callbacks with predicates", function(){
+    it("should call all matching subscribers with predicates", function(){
       var spy = sinon.spy(),
           data = ["data"];
 
@@ -235,7 +241,7 @@ describe("Channel", function() {
       expect(spy).calledWith(data[0]);
     });
 
-    it("should call all matching callbacks with context", function(){
+    it("should call all matching subscribers with context", function(){
       var spy = sinon.spy(),
           data = ["data"];
 
