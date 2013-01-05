@@ -42,19 +42,20 @@ then you can being subscribing, removing, and publishing.
 Subscription signature:
 
     Mediator.subscribe(channel, callback, <options>, <context>);
-    Mediator.once(channel, callback, <options>, <context>);
     Mediator.publish(channel, <data, data, ... >)
     Mediator.remove(channel, <identifier>)
 
 Additionally, `on` and `bind` are aliased to `subscribe`, and `trigger` and
-`emit` are bound to `publish`. `off` is an alias for `remove`.
+`emit` are bound to `publish`. `off` is an alias for `remove`. You can use
+`once` to subscribe to an event that should only be fired once.
 
-Callback signature:
+Subscriber signature:
 
     function(<data, data ...>, channel);
 
+The channel is always returned as the last argument to subscriber functions.
 
-Mediator.subscribe and Mediator.once options (all are optional; default is empty):
+Mediator.subscribe options (all are optional; default is empty):
 
     {
       predicate: function(*args){ ... }
@@ -82,7 +83,7 @@ removal later.
       options, // options
       context, // context for fn to be called within
       channel, // provides a pointer back to its channel
-      update(options){ ...} // function that accepts { fn, options, context }
+      update(options){ ...} // update the subscriber ({ fn, options, context })
     }
 
 Examples:
@@ -140,7 +141,7 @@ You can stop the chain of execution by calling channel.stopPropagation():
 
     // for example, let's not post the message if the from and to are the same
     mediator.subscribe("application:chat", function(data, channel){
-      //something with data
+      alert("Don't send messages to yourself!");
       channel.stopPropagation();
     }, options: {
       predicate: function(data){ return data.From == data.To },
