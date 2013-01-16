@@ -14,6 +14,8 @@ For more information, please see
 
 Documentation built using [Paige](https://github.com/rthauby/Paige)
 
+[Changelog][]
+
 A light utility class to help implement the Mediator pattern for easy eventing
 ------------------------------------------------------------------------------
 
@@ -148,8 +150,12 @@ You can stop the chain of execution by calling channel.stopPropagation():
       priority: 0
     });
 
-Changes from Last Version
--------------------------
+Changelog
+---------
+
+__Version 0.9.1__
+* Fixed AMD / `define` syntax
+* Exposed `Mediator.version`
 
 __Version 0.9.0__
 
@@ -197,6 +203,7 @@ __Version 0.4.0__
 at the end of the subcription call.
 * Signatures changed; context moved to the end of subscriptions
 * Namespacing for subscription binding
+
 
 License
 -------
