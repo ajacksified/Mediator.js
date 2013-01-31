@@ -41,6 +41,9 @@ You can register events with the mediator two ways using channels. You can add
 a predicate to perform more complex matching.  Instantiate a new mediator, and
 then you can being subscribing, removing, and publishing.
 
+To use it in the browser, include `mediator.min.js` from the root here, or the
+unminified version at `lib/mediator.js.`
+
 Subscription signature:
 
     Mediator.subscribe(channel, callback, <options>, <context>);
@@ -59,11 +62,13 @@ The channel is always returned as the last argument to subscriber functions.
 
 Mediator.subscribe options (all are optional; default is empty):
 
-    {
-      predicate: function(*args){ ... }
-      priority: 0|1|... 
-      calls: 1|2|...
-    }
+```javascript
+{
+  predicate: function(*args){ ... }
+  priority: 0|1|... 
+  calls: 1|2|...
+}
+```
 
 Predicates return a boolean and are run using whatever args are passed in by the
 publishing class. If the boolean is true, the subscriber is run.
@@ -79,76 +84,92 @@ A Subscriber object is returned when calling Mediator.subscribe. It allows you
 to update options on a given subscriber, or to reference it by an id for easy
 removal later.
 
-    {
-      id, // guid
-      fn, // function
-      options, // options
-      context, // context for fn to be called within
-      channel, // provides a pointer back to its channel
-      update(options){ ...} // update the subscriber ({ fn, options, context })
-    }
+```javascript
+{
+  id, // guid
+  fn, // function
+  options, // options
+  context, // context for fn to be called within
+  channel, // provides a pointer back to its channel
+  update(options){ ...} // update the subscriber ({ fn, options, context })
+}
+```
 
 Examples:
 
-    var mediator = new Mediator();
+```javascript
+var mediator = new Mediator();
 
-    // Alert data when the "message" channel is published to
-    // Subscribe returns a "Subscriber" object
-    mediator.subscribe("message", function(data){ alert(data); });
-    mediator.publish("message", "Hello, world");
+// Alert data when the "message" channel is published to
+// Subscribe returns a "Subscriber" object
+mediator.subscribe("message", function(data){ alert(data); });
+mediator.publish("message", "Hello, world");
 
-    // Alert the "message" property of the object called when the predicate function returns true (The "From" property is equal to "Jack")
-    var predicate = function(data){ return data.From === "Jack" };
-    mediator.subscribe("channel", function(data){ alert(data.Message); }, { predicate: predicate });
-    mediator.publish("channel", { Message: "Hey!", From: "Jack" }); //alerts
-    mediator.publish("channel", { Message: "Hey!", From: "Audrey" }); //doesn't alert
+// Alert the "message" property of the object called when the predicate function returns true (The "From" property is equal to "Jack")
+var predicate = function(data){ return data.From === "Jack" };
+mediator.subscribe("channel", function(data){ alert(data.Message); }, { predicate: predicate });
+mediator.publish("channel", { Message: "Hey!", From: "Jack" }); //alerts
+mediator.publish("channel", { Message: "Hey!", From: "Audrey" }); //doesn't alert
+```
 
 You can remove events by passing in a channel, or a channel and the
 function to remove or subscriber id. If you only pass in a channel,
 all subscribers are removed.
 
-    // removes all methods bound directly to a channel, but not subchannels
-    mediator.remove("channel");
+```javascript
+// removes all methods bound directly to a channel, but not subchannels
+mediator.remove("channel");
 
-    // unregisters *only* MethodFN, a named function, from "channel"
-    mediator.remove("channel", MethodFN);
+// unregisters *only* MethodFN, a named function, from "channel"
+mediator.remove("channel", MethodFN);
+```
 
 You can call the registered functions with the Publish method, which accepts 
 an args array:
 
-    mediator.publish("channel", "argument", "another one", { etc: true });
+```javascript
+mediator.publish("channel", "argument", "another one", { etc: true });
+```
 
 You can namespace your subscribing / removing / publishing as such:
 
-    mediator.subscribe("application:chat:receiveMessage", function(data){ ... });
+```javascript
+mediator.subscribe("application:chat:receiveMessage", function(data){ ... });
 
-    // will call parents of the appllication:chat:receiveMessage namespace
-    // (that is, next it will call all subscribers of application:chat, and then
-    // application). It will not recursively call subchannels - only direct subscribers.
-    mediator.publish("application:chat:receiveMessage", "Jack Lawson", "Hey");
+// will call parents of the appllication:chat:receiveMessage namespace
+// (that is, next it will call all subscribers of application:chat, and then
+// application). It will not recursively call subchannels - only direct subscribers.
+mediator.publish("application:chat:receiveMessage", "Jack Lawson", "Hey");
+```
 
 You can update Subscriber priority:
 
-    var sub = mediator.subscribe("application:chat", function(data){ ... });
-    var sub2 = mediator.subscribe("application:chat", function(data){ ... });
+```javascript
+var sub = mediator.subscribe("application:chat", function(data){ ... });
+var sub2 = mediator.subscribe("application:chat", function(data){ ... });
 
-    // have sub2 executed first
-    mediator.getChannel("application:chat").setPriority(sub2.id, 0);
+// have sub2 executed first
+mediator.getChannel("application:chat").setPriority(sub2.id, 0);
+```
 
 You can update Subscriber callback, context, and/or options:
 
-    sub.update({ fn: ..., context: { }, options: { ... });
+```javascript
+sub.update({ fn: ..., context: { }, options: { ... });
+```
 
 You can stop the chain of execution by calling channel.stopPropagation():
 
-    // for example, let's not post the message if the from and to are the same
-    mediator.subscribe("application:chat", function(data, channel){
-      alert("Don't send messages to yourself!");
-      channel.stopPropagation();
-    }, options: {
-      predicate: function(data){ return data.From == data.To },
-      priority: 0
-    });
+```javascript
+// for example, let's not post the message if the from and to are the same
+mediator.subscribe("application:chat", function(data, channel){
+  alert("Don't send messages to yourself!");
+  channel.stopPropagation();
+}, options: {
+  predicate: function(data){ return data.From == data.To },
+  priority: 0
+});
+```
 
 Changelog
 ---------
