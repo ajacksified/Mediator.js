@@ -1,6 +1,6 @@
 Mediator.js
 ===========
-Version 0.9.0
+Version 0.9.1
 
 __Breaking changes since version 0.7.0:__ see changelog below
 
