@@ -183,16 +183,19 @@ describe("Channel", function() {
     it("should remove matching subscribers a valid id is given", function(){
       var spy = sinon.spy(),
           spy2 = sinon.spy(),
-          sub = channel.addSubscriber(spy);
-
-      channel.addSubscriber(spy2);
+          spy3 = sinon.spy();
+      
+      channel.addSubscriber(spy);
+      var sub2 = channel.addSubscriber(spy2);
       expect(channel._subscribers.length).to.equal(2);
-
-      channel.removeSubscriber(sub.id);
-      expect(channel._subscribers.length).to.equal(1);
-      expect(channel._subscribers[0].fn).to.equal(spy2);
+      channel.addSubscriber(spy3);
+      expect(channel._subscribers.length).to.equal(3);
+      
+      channel.removeSubscriber(sub2.id);
+      expect(channel._subscribers.length).to.equal(2);
+      expect(channel._subscribers[0].fn).to.equal(spy);
+      expect(channel._subscribers[1].fn).to.equal(spy3);
     });
-
 
     it("should do nothing if an valid fn is given", function(){
       var spy = sinon.spy(),
