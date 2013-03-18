@@ -6,7 +6,8 @@
   "main": "index",
   "readmeFilename": "README.md",
   "scripts": {
-    "test": "mocha && MEDIATOR_JS_COV=1 mocha -R html-cov > coverage.html"
+    "test": "mocha",
+    "test_with_coverage": "mocha && MEDIATOR_JS_COV=1 mocha -R html-cov > coverage.html"
   },
   "respository": {
     "type": "git",
