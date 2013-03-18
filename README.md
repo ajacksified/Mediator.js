@@ -1,6 +1,6 @@
 Mediator.js
 ===========
-Version 0.9.1
+Version 0.9.2
 
 __Breaking changes since version 0.7.0:__ see changelog below
 
@@ -24,6 +24,8 @@ subscriber methods to help event-based, asyncronous programming.  Its purpose
 is to make the usage of WebSockets, Ajax calls, DOM events, or any other
 asynchronous operations easy to maintain and test.
 
+Mediator has no dependencies on any other libraries.
+
 *1.12kb, minifed and gzipped*
 
 Why?
@@ -37,6 +39,37 @@ by [Addy Osmani](http://addyosmani.com/resources/essentialjsdesignpatterns/book/
 Usage
 -----
 
+### Using in Node
+
+The package is in NPM as `mediator-js`. Include it in your project like so:
+
+```javascript
+var Mediator = require("mediator-js").Mediator,
+    mediator = new Mediator();
+
+mediator.subscribe("wat", function(){ console.log(arguments); });
+mediator.publish("wat", 7, "hi", { one: 1 });
+```
+
+### Using in the Browser
+
+Mediator.js is compatible with browser module-loading solutions, including but
+not limited to Browserify, Almond.js, Require.js, and others.
+
+```html
+<script src="/js/Mediator.min.js"></script>
+
+<script>
+  var Mediator = require("mediator-js").Mediator,
+      mediator = new Mediator();
+
+  mediator.subscribe("wat", function(){ console.log(arguments); });
+  mediator.publish("wat", 7, "hi", { one: 1 });
+</script>
+```
+
+### API
+
 You can register events with the mediator two ways using channels. You can add
 a predicate to perform more complex matching.  Instantiate a new mediator, and
 then you can being subscribing, removing, and publishing.
@@ -45,10 +78,11 @@ To use it in the browser, include `mediator.min.js` from the root here, or the
 unminified version at `lib/mediator.js.`
 
 Subscription signature:
+    var mediator = new Mediator();
 
-    Mediator.subscribe(channel, callback, <options>, <context>);
-    Mediator.publish(channel, <data, data, ... >)
-    Mediator.remove(channel, <identifier>)
+    mediator.subscribe(channel, callback, <options>, <context>);
+    mediator.publish(channel, <data, data, ... >)
+    mediator.remove(channel, <identifier>)
 
 Additionally, `on` and `bind` are aliased to `subscribe`, and `trigger` and
 `emit` are bound to `publish`. `off` is an alias for `remove`. You can use
@@ -173,6 +207,9 @@ mediator.subscribe("application:chat", function(data, channel){
 
 Changelog
 ---------
+
+__Version 0.9.2__
+* Updated AMD `define` syntax
 
 __Version 0.9.1__
 * Fixed AMD / `define` syntax
