@@ -1,5 +1,7 @@
 Mediator.js
 ===========
+[![Build Status](https://travis-ci.org/ajacksified/Mediator.js.png)](https://travis-ci.org/ajacksified/Mediator.js)
+
 Version 0.9.2
 
 __Breaking changes since version 0.7.0:__ see changelog below
