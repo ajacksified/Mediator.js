@@ -2,9 +2,7 @@ Mediator.js
 ===========
 [![Build Status](https://travis-ci.org/ajacksified/Mediator.js.png)](https://travis-ci.org/ajacksified/Mediator.js)
 
-Version 0.9.2
-
-__Breaking changes since version 0.7.0:__ see changelog below
+Version 0.9.3
 
 For more information, please see 
 
@@ -57,6 +55,9 @@ mediator.publish("wat", 7, "hi", { one: 1 });
 
 Mediator.js is compatible with browser module-loading solutions, including but
 not limited to Browserify, Almond.js, Require.js, and others.
+
+__Note__: if using AMD / Almond module loading, use the NPM package name:
+`require("mediator-js").Mediator`
 
 ```html
 <script src="/js/Mediator.min.js"></script>
@@ -210,8 +211,9 @@ mediator.subscribe("application:chat", function(data, channel){
 Changelog
 ---------
 
-__Version 0.9.2__
-* Updated AMD `define` syntax
+__Version 0.9.3__
+* Make AMD name match npm package name (`mediator-js`). Used `Mediator.js` 
+  previously.
 
 __Version 0.9.1__
 * Fixed AMD / `define` syntax
