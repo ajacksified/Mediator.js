@@ -51,6 +51,20 @@ describe("Mediator", function() {
 
       expect(spy).calledThrice;
     });
+
+    it("should remove a subscriber in a list of others that's been called its maximum amount of times", function(){
+      var spy = sinon.spy(), i;
+
+      mediator.subscribe("test", function(){});
+      mediator.subscribe("test", spy, { calls: 3 });
+      mediator.subscribe("test", function(){});
+
+      for(i = 0; i < 5; i++){
+        mediator.publish("test");
+      }
+
+      expect(spy).calledThrice;
+    });
   });
 
   describe("publishing", function(){
