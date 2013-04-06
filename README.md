@@ -2,7 +2,7 @@ Mediator.js
 ===========
 [![Build Status](https://travis-ci.org/ajacksified/Mediator.js.png)](https://travis-ci.org/ajacksified/Mediator.js)
 
-Version 0.9.3
+Version 0.9.4
 
 For more information, please see 
 
@@ -210,6 +210,9 @@ mediator.subscribe("application:chat", function(data, channel){
 
 Changelog
 ---------
+
+__Version 0.9.4__
+* Fixed issue with auto-removing subscribers after a maximum amount of calls
 
 __Version 0.9.3__
 * Make AMD name match npm package name (`mediator-js`). Used `Mediator.js` 

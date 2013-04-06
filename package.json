@@ -1,6 +1,6 @@
 {
   "name": "mediator-js",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "Flexible event management. Implementation of the mediator pattern.",
   "author": "Jack Lawson <jlawson@olivinelabs.com>",
   "main": "index",
