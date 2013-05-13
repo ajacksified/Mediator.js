@@ -14,7 +14,7 @@ For more information, please see
 
 Documentation built using [Paige](https://github.com/rthauby/Paige)
 
-[Changelog][]
+[Changelog](#changelog)
 
 A light utility class to help implement the Mediator pattern for easy eventing
 ------------------------------------------------------------------------------
