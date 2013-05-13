@@ -4,17 +4,11 @@ Mediator.js
 
 Version 0.9.4
 
-For more information, please see 
-
-[Relevant blog post](http://thejacklawson.com/2011/06/mediators-for-modularized-asynchronous-programming-in-javascript/)
-
-[View the project on Github](https://github.com/ajacksified/Mediator.js)
-
-[View the documentation](http://thejacklawson.com/Mediator.js/)
-
-Documentation built using [Paige](https://github.com/rthauby/Paige)
-
-[Changelog](#changelog)
+* [View the documentation](http://thejacklawson.com/Mediator.js/)
+* [View the project on Github](https://github.com/ajacksified/Mediator.js)
+* [Relevant blog post](http://thejacklawson.com/2011/06/mediators-for-modularized-asynchronous-programming-in-javascript/)
+* Documentation built using [Paige](https://github.com/rthauby/Paige)
+* [Changelog](#changelog)
 
 A light utility class to help implement the Mediator pattern for easy eventing
 ------------------------------------------------------------------------------
