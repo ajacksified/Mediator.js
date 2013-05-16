@@ -186,16 +186,15 @@ describe("Mediator", function() {
       expect(spy2).not.called;
     });
 
-    it("should remove subscriber by calling from it's callback", function(){
-      var callbacks = {
-        remover: function(){
+    it("should remove subscriber by calling from its callback", function(){
+      var remover = function(){
           mediator.remove("test", sub.id);
-        }
-      };
+        };
       var spy = sinon.spy(),
           spy2 = sinon.spy(),
-          catched = false;
-      var sub = mediator.subscribe("test", callbacks.remover);
+          catched = false,
+          self = this;
+      var sub = mediator.subscribe("test", remover);
       mediator.subscribe("test", spy);
       mediator.subscribe("test", spy2);
       try{
@@ -207,9 +206,9 @@ describe("Mediator", function() {
       expect(catched).to.be.false;
       expect(spy).to.called;
       expect(spy2).to.called;
-      sinon.spy(callbacks, "remover");
+      var remover = sinon.spy(remover);
       mediator.publish("test");
-      expect(callbacks.remover).not.to.called;
+      expect(remover).not.to.called;
       expect(spy).to.called;
       expect(spy2).to.called;  
     });
