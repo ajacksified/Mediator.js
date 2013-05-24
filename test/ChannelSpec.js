@@ -197,7 +197,7 @@ describe("Channel", function() {
       expect(channel._subscribers[1].fn).to.equal(spy3);
     });
 
-    it("should do nothing if an valid fn is given", function(){
+    it("should do nothing if an invalid fn is given", function(){
       var spy = sinon.spy(),
           invalidFn = "derp";
 
@@ -268,5 +268,36 @@ describe("Channel", function() {
       expect(spy).calledWith(data[0]);
       expect(spy2).calledWith(data[0]);
     });
+    
+    it("should call all matching subscribers with context", function(){
+      var spy = sinon.spy(),
+          data = ["data"];
+
+      channel.addSubscriber(function() { this(); }, {}, spy );
+      channel.publish(data);
+
+      expect(spy).called;
+    });
+    
+    it("should call subscribers in predefined priority", function(){
+      var sub1 = function(){
+        this.a += "1";
+      },
+      sub2 = function(){
+        this.a += "2";
+      },
+      sub3 = function(){
+        this.a += "3";
+      },
+      data = ["data"];
+      this.a = "0";
+
+      channel.addSubscriber(sub3, {}, this);
+      channel.addSubscriber(sub1, { priority: 2 }, this);
+      channel.addSubscriber(sub2, { priority: 1 }, this);
+      channel.publish(data);
+      expect(this.a).to.equal("0123");
+    });
+
   });
 });
