@@ -164,6 +164,53 @@ describe("Mediator", function() {
 
       expect(spy).not.called;
       expect(spy2).called;
+    });    
+
+    it("should remove subscribers by calling from subscriber's callback", function(){
+      var spy = sinon.spy(),
+          spy2 = sinon.spy(),
+          catched = false;
+      mediator.subscribe("test", function(){
+        mediator.remove("test");
+      });
+      mediator.subscribe("test", spy);
+      mediator.subscribe("test", spy2);
+      try{
+        mediator.publish("test");
+      }
+      catch (e){
+        catched = true;
+      }
+      expect(catched).to.be.false;
+      expect(spy).not.called;
+      expect(spy2).not.called;
+    });
+
+    it("should remove subscriber by calling from its callback", function(){
+      var remover = function(){
+          mediator.remove("test", sub.id);
+        };
+      var spy = sinon.spy(),
+          spy2 = sinon.spy(),
+          catched = false,
+          self = this;
+      var sub = mediator.subscribe("test", remover);
+      mediator.subscribe("test", spy);
+      mediator.subscribe("test", spy2);
+      try{
+        mediator.publish("test");
+      }
+      catch (e){
+        catched = true;
+      }
+      expect(catched).to.be.false;
+      expect(spy).to.called;
+      expect(spy2).to.called;
+      var remover = sinon.spy(remover);
+      mediator.publish("test");
+      expect(remover).not.to.called;
+      expect(spy).to.called;
+      expect(spy2).to.called;  
     });
   });
 
