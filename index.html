@@ -1,21 +1,16 @@
-<!DOCTYPE html> <html>
-  <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">      <title>Mediator.js</title>   <style>     body {       font-size: 16px;       line-height: 24px;       background: #fff url("bg.png");       color: #252519;       font-family: "Palatino Linotype", "Book Antiqua", Palatino, FreeSerif, serif;       padding: 0 0 50px 50px;     }     div.container {       width: 720px;       margin: 50px 0 50px 50px;     }     p {       width: 550px;     }       #documentation p {         margin-bottom: 4px;       }     a, a:visited {       padding: 0 2px;       text-decoration: none;       background: #dbe6f3;       color: #3f6fa5;     }     a:active, a:hover {       color: #dbe6f3;       background: #3f6fa5;     }     h1, h2, h3, h4, h5, h6 {       margin-top: 40px;       width: 550px;       line-height: 1.25em;     }     b.header {       font-size: 18px;     }     span.alias {       font-size: 14px;       font-style: italic;       margin-left: 20px;     }     table, tr, td {       margin: 0; padding: 0;     }       td {         padding: 2px 12px 2px 0;       }     ul {       list-style-type: circle;       padding: 0 0 0 20px;     }       li {         width: 500px;         margin-bottom: 10px;       }     code data-language="javascript", pre, tt {       font-family: Monaco, Consolas, "Lucida Console", monospace;       font-size: 12px;       line-height: 18px;       color: #555529;     }       pre {         font-size: 12px;         padding: 2px 0 2px 12px;         border-left: 6px solid #aaaa99;         margin: 0px 0 30px;       }            #ribbon {      line-height: 0;     }          #ribbon:hover {      background: none;     }          #ribbon img {      position: fixed;      top: 0;      right: 0;      border: 0;      z-index: 2;     }   </style> 
-    <link rel="stylesheet" href="rainbow-espresso-libre.css">
-    </head> <body>      <h1>Mediator.js</h1>        <em>A light utility class to help implement the Mediator pattern</em>         <h3>Source files:</h3>   <ol>            <li><a href="mediator.html">mediator.js</a></li>        </ol>      <h1>Mediator.js</h1>
+<!DOCTYPE html> <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">      <title>Mediator.js</title>   <style>     body {       font-size: 16px;       line-height: 24px;       background: #fff url("bg.png");       color: #252519;       font-family: "Palatino Linotype", "Book Antiqua", Palatino, FreeSerif, serif;       padding: 0 0 50px 50px;     }     div.container {       width: 720px;       margin: 50px 0 50px 50px;     }     p {       width: 550px;     }       #documentation p {         margin-bottom: 4px;       }     a, a:visited {       padding: 0 2px;       text-decoration: none;       background: #dbe6f3;       color: #3f6fa5;     }     a:active, a:hover {       color: #dbe6f3;       background: #3f6fa5;     }     h1, h2, h3, h4, h5, h6 {       margin-top: 40px;       width: 550px;       line-height: 1.25em;     }     b.header {       font-size: 18px;     }     span.alias {       font-size: 14px;       font-style: italic;       margin-left: 20px;     }     table, tr, td {       margin: 0; padding: 0;     }       td {         padding: 2px 12px 2px 0;       }     ul {       list-style-type: circle;       padding: 0 0 0 20px;     }       li {         width: 500px;         margin-bottom: 10px;       }     code, pre, tt {       font-family: Monaco, Consolas, "Lucida Console", monospace;       font-size: 12px;       line-height: 18px;       color: #555529;     }       pre {         font-size: 12px;         padding: 2px 0 2px 12px;         border-left: 6px solid #aaaa99;         margin: 0px 0 30px;       }            #ribbon {      line-height: 0;     }          #ribbon:hover {      background: none;     }          #ribbon img {      position: fixed;      top: 0;      right: 0;      border: 0;      z-index: 2;     }   </style> </head> <body>      <h1>Mediator.js</h1>        <em>A light utility class to help implement the Mediator pattern</em>         <h3>Source files:</h3>   <ol>            <li><a href="mediator.html">mediator.js</a></li>        </ol>      <h1>Mediator.js</h1>
 
-<p>Version 0.9.0</p>
+<p><a href="https://travis-ci.org/ajacksified/Mediator.js"><img src="https://travis-ci.org/ajacksified/Mediator.js.png" alt="Build Status" title="" /></a></p>
 
-<p><strong>Breaking changes since version 0.7.0:</strong> see changelog below</p>
+<p>Version 0.9.5</p>
 
-<p>For more information, please see </p>
-
-<p><a href="http://thejacklawson.com/2011/06/mediators-for-modularized-asynchronous-programming-in-javascript/">Relevant blog post</a></p>
-
-<p><a href="https://github.com/ajacksified/Mediator.js">View the project on Github</a></p>
-
-<p><a href="http://thejacklawson.com/Mediator.js/">View the documentation</a></p>
-
-<p>Documentation built using <a href="https://github.com/rthauby/Paige">Paige</a></p>
+<ul>
+<li><a href="http://thejacklawson.com/Mediator.js/">View the documentation</a></li>
+<li><a href="https://github.com/ajacksified/Mediator.js">View the project on Github</a></li>
+<li><a href="http://thejacklawson.com/2011/06/mediators-for-modularized-asynchronous-programming-in-javascript/">Relevant blog post</a></li>
+<li>Documentation built using <a href="https://github.com/rthauby/Paige">Paige</a></li>
+<li><a href="#changelog">Changelog</a></li>
+</ul>
 
 <h2>A light utility class to help implement the Mediator pattern for easy eventing</h2>
 
@@ -23,6 +18,8 @@
 subscriber methods to help event-based, asyncronous programming.  Its purpose
 is to make the usage of WebSockets, Ajax calls, DOM events, or any other
 asynchronous operations easy to maintain and test.</p>
+
+<p>Mediator has no dependencies on any other libraries.</p>
 
 <p><em>1.12kb, minifed and gzipped</em></p>
 
@@ -36,38 +33,80 @@ by <a href="http://addyosmani.com/resources/essentialjsdesignpatterns/book/#medi
 
 <h2>Usage</h2>
 
+<h3>Using in Node</h3>
+
+<p>The package is in NPM as <code>mediator-js</code>. Include it in your project like so:</p>
+
+<pre>
+var Mediator = require("mediator-js"),
+    mediator = new Mediator();
+
+mediator.subscribe("wat", function(){ console.log(arguments); });
+mediator.publish("wat", 7, "hi", { one: 1 });
+</pre>
+
+<h3>Using in the Browser</h3>
+
+<p>Mediator.js is compatible with browser module-loading solutions, including but
+not limited to Browserify, Almond.js, Require.js, and others.</p>
+
+<p><strong>Note</strong>: if using AMD / Almond module loading, use the NPM package name:
+<code>require("mediator-js").Mediator</code></p>
+
+<pre>
+<script src="/js/Mediator.min.js"></script>
+
+<script>
+  var Mediator = require("mediator-js").Mediator,
+      mediator = new Mediator();
+
+  mediator.subscribe("wat", function(){ console.log(arguments); });
+  mediator.publish("wat", 7, "hi", { one: 1 });
+</script>
+</pre>
+
+<h3>API</h3>
+
 <p>You can register events with the mediator two ways using channels. You can add
 a predicate to perform more complex matching.  Instantiate a new mediator, and
 then you can being subscribing, removing, and publishing.</p>
 
-<p>Subscription signature:</p>
+<p>To use it in the browser, include <code>mediator.min.js</code> from the root here, or the
+unminified version at <code>lib/mediator.js.</code></p>
 
-<pre><code data-language="javascript">Mediator.subscribe(channel, callback, &lt;options&gt;, &lt;context&gt;);
-Mediator.once(channel, callback, &lt;options&gt;, &lt;context&gt;);
-Mediator.publish(channel, &lt;data, data, ... &gt;)
-Mediator.remove(channel, &lt;identifier&gt;)</code data-language="javascript"></pre>
+<p>Subscription signature:
+    var mediator = new Mediator();</p>
 
-<p>Additionally, <code data-language="javascript">on</code data-language="javascript"> and <code data-language="javascript">bind</code data-language="javascript"> are aliased to <code data-language="javascript">subscribe</code data-language="javascript">, and <code data-language="javascript">trigger</code data-language="javascript"> and
-<code data-language="javascript">emit</code data-language="javascript"> are bound to <code data-language="javascript">publish</code data-language="javascript">. <code data-language="javascript">off</code data-language="javascript"> is an alias for <code data-language="javascript">remove</code data-language="javascript">.</p>
+<pre><code>mediator.subscribe(channel, callback, &lt;options&gt;, &lt;context&gt;);
+mediator.publish(channel, &lt;data, data, ... &gt;)
+mediator.remove(channel, &lt;identifier&gt;)</code></pre>
 
-<p>Callback signature:</p>
+<p>Additionally, <code>on</code> and <code>bind</code> are aliased to <code>subscribe</code>, and <code>trigger</code> and
+<code>emit</code> are bound to <code>publish</code>. <code>off</code> is an alias for <code>remove</code>. You can use
+<code>once</code> to subscribe to an event that should only be fired once.</p>
 
-<pre><code data-language="javascript">function(&lt;data, data ...&gt;, channel);</code data-language="javascript"></pre>
+<p>Subscriber signature:</p>
 
-<p>Mediator.subscribe and Mediator.once options (all are optional; default is empty):</p>
+<pre><code>function(&lt;data, data ...&gt;, channel);</code></pre>
 
-<pre><code data-language="javascript">{
+<p>The channel is always returned as the last argument to subscriber functions.</p>
+
+<p>Mediator.subscribe options (all are optional; default is empty):</p>
+
+<pre>
+{
   predicate: function(*args){ ... }
   priority: 0|1|... 
   calls: 1|2|...
-}</code data-language="javascript"></pre>
+}
+</pre>
 
 <p>Predicates return a boolean and are run using whatever args are passed in by the
 publishing class. If the boolean is true, the subscriber is run.</p>
 
 <p>Priority marks the order in which a subscriber is called.</p>
 
-<p><code data-language="javascript">calls</code data-language="javascript"> allows you to specify how many times the subscriber is called before it
+<p><code>calls</code> allows you to specify how many times the subscriber is called before it
 is automatically removed. This is decremented each time it is called until it
 reaches 0 and is removed. If it has a predicate and the predicate does not match,
 calls is not decremented.</p>
@@ -76,18 +115,21 @@ calls is not decremented.</p>
 to update options on a given subscriber, or to reference it by an id for easy
 removal later.</p>
 
-<pre><code data-language="javascript">{
+<pre>
+{
   id, // guid
   fn, // function
   options, // options
   context, // context for fn to be called within
   channel, // provides a pointer back to its channel
-  update(options){ ...} // function that accepts { fn, options, context }
-}</code data-language="javascript"></pre>
+  update(options){ ...} // update the subscriber ({ fn, options, context })
+}
+</pre>
 
 <p>Examples:</p>
 
-<pre><code data-language="javascript">var mediator = new Mediator();
+<pre>
+var mediator = new Mediator();
 
 // Alert data when the "message" channel is published to
 // Subscribe returns a "Subscriber" object
@@ -98,64 +140,91 @@ mediator.publish("message", "Hello, world");
 var predicate = function(data){ return data.From === "Jack" };
 mediator.subscribe("channel", function(data){ alert(data.Message); }, { predicate: predicate });
 mediator.publish("channel", { Message: "Hey!", From: "Jack" }); //alerts
-mediator.publish("channel", { Message: "Hey!", From: "Audrey" }); //doesn't alert</code data-language="javascript"></pre>
+mediator.publish("channel", { Message: "Hey!", From: "Audrey" }); //doesn't alert
+</pre>
 
 <p>You can remove events by passing in a channel, or a channel and the
 function to remove or subscriber id. If you only pass in a channel,
 all subscribers are removed.</p>
 
-<pre><code data-language="javascript">// removes all methods bound directly to a channel, but not subchannels
+<pre>
+// removes all methods bound directly to a channel, but not subchannels
 mediator.remove("channel");
 
 // unregisters *only* MethodFN, a named function, from "channel"
-mediator.remove("channel", MethodFN);</code data-language="javascript"></pre>
+mediator.remove("channel", MethodFN);
+</pre>
 
 <p>You can call the registered functions with the Publish method, which accepts 
 an args array:</p>
 
-<pre><code data-language="javascript">mediator.publish("channel", "argument", "another one", { etc: true });</code data-language="javascript"></pre>
+<pre>
+mediator.publish("channel", "argument", "another one", { etc: true });
+</pre>
 
 <p>You can namespace your subscribing / removing / publishing as such:</p>
 
-<pre><code data-language="javascript">mediator.subscribe("application:chat:receiveMessage", function(data){ ... });
+<pre>
+mediator.subscribe("application:chat:receiveMessage", function(data){ ... });
 
 // will call parents of the appllication:chat:receiveMessage namespace
 // (that is, next it will call all subscribers of application:chat, and then
 // application). It will not recursively call subchannels - only direct subscribers.
-mediator.publish("application:chat:receiveMessage", "Jack Lawson", "Hey");</code data-language="javascript"></pre>
+mediator.publish("application:chat:receiveMessage", "Jack Lawson", "Hey");
+</pre>
 
 <p>You can update Subscriber priority:</p>
 
-<pre><code data-language="javascript">var sub = mediator.subscribe("application:chat", function(data){ ... });
+<pre>
+var sub = mediator.subscribe("application:chat", function(data){ ... });
 var sub2 = mediator.subscribe("application:chat", function(data){ ... });
 
 // have sub2 executed first
-mediator.getChannel("application:chat").setPriority(sub2.id, 0);</code data-language="javascript"></pre>
+mediator.getChannel("application:chat").setPriority(sub2.id, 0);
+</pre>
 
 <p>You can update Subscriber callback, context, and/or options:</p>
 
-<pre><code data-language="javascript">sub.update({ fn: ..., context: { }, options: { ... });</code data-language="javascript"></pre>
+<pre>
+sub.update({ fn: ..., context: { }, options: { ... });
+</pre>
 
 <p>You can stop the chain of execution by calling channel.stopPropagation():</p>
 
-<pre><code data-language="javascript">// for example, let's not post the message if the from and to are the same
+<pre>
+// for example, let's not post the message if the from and to are the same
 mediator.subscribe("application:chat", function(data, channel){
-  //something with data
+  alert("Don't send messages to yourself!");
   channel.stopPropagation();
 }, options: {
   predicate: function(data){ return data.From == data.To },
   priority: 0
-});</code data-language="javascript"></pre>
+});
+</pre>
 
-<h2>Changes from Last Version</h2>
+<h2>Changelog</h2>
+
+<p><strong>Version 0.9.5</strong>
+* Fixed issue with requring from node</p>
+
+<p><strong>Version 0.9.4</strong>
+* Fixed issue with auto-removing subscribers after a maximum amount of calls</p>
+
+<p><strong>Version 0.9.3</strong>
+* Make AMD name match npm package name (<code>mediator-js</code>). Used <code>Mediator.js</code> 
+  previously.</p>
+
+<p><strong>Version 0.9.1</strong>
+* Fixed AMD / <code>define</code> syntax
+* Exposed <code>Mediator.version</code></p>
 
 <p><strong>Version 0.9.0</strong></p>
 
 <ul>
 <li>Reversed order of recursion: now calls parents instead of children channels</li>
 <li>Lowercase methods</li>
-<li>Aliases: <code data-language="javascript">on</code data-language="javascript"> and <code data-language="javascript">bind</code data-language="javascript"> are aliased to <code data-language="javascript">subscribe</code data-language="javascript">, and <code data-language="javascript">trigger</code data-language="javascript"> and
-<code data-language="javascript">emit</code data-language="javascript"> are bound to <code data-language="javascript">publish</code data-language="javascript">. <code data-language="javascript">off</code data-language="javascript"> is an alias for <code data-language="javascript">remove</code data-language="javascript">.</li>
+<li>Aliases: <code>on</code> and <code>bind</code> are aliased to <code>subscribe</code>, and <code>trigger</code> and
+<code>emit</code> are bound to <code>publish</code>. <code>off</code> is an alias for <code>remove</code>.</li>
 <li>Moved tests to mocha from jasmine</li>
 <li>Supports AMD, requirejs, and browser loading</li>
 <li>Lots of cleanup around extra variables, and jslinted</li>
@@ -218,10 +287,4 @@ at the end of the subcription call.</li>
 <h2>In Closing</h2>
 
 <p>Have fun, and please submit suggestions and improvements! You can leave any
-  issues here, or contact me at (<a href="https://twitter.com/ajacksified">@ajacksified</a>).</p> 
-
-<script src="rainbow.min.js"></script>
-<script src="generic.js"></script>
-<script src="javascript.js"></script>
-
-</body> </html>
+issues here, or contact me at (<a href="https://twitter.com/ajacksified">@ajacksified</a>).</p> </body> </html>
