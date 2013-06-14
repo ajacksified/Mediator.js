@@ -2,7 +2,7 @@ Mediator.js
 ===========
 [![Build Status](https://travis-ci.org/ajacksified/Mediator.js.png)](https://travis-ci.org/ajacksified/Mediator.js)
 
-Version 0.9.4
+Version 0.9.5
 
 * [View the documentation](http://thejacklawson.com/Mediator.js/)
 * [View the project on Github](https://github.com/ajacksified/Mediator.js)
@@ -204,6 +204,9 @@ mediator.subscribe("application:chat", function(data, channel){
 
 Changelog
 ---------
+
+__Version 0.9.5__
+* Fixed issue with requring from node
 
 __Version 0.9.4__
 * Fixed issue with auto-removing subscribers after a maximum amount of calls
