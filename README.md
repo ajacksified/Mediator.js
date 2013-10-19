@@ -2,7 +2,7 @@ Mediator.js
 ===========
 [![Build Status](https://travis-ci.org/ajacksified/Mediator.js.png)](https://travis-ci.org/ajacksified/Mediator.js)
 
-Version 0.9.5
+Version 0.9.6
 
 * [View the documentation](http://thejacklawson.com/Mediator.js/)
 * [View the project on Github](https://github.com/ajacksified/Mediator.js)
@@ -205,6 +205,9 @@ mediator.subscribe("application:chat", function(data, channel){
 Changelog
 ---------
 
+__Version 0.9.6__
+* Fixed AMD-style export; export constructor, not instance
+
 __Version 0.9.5__
 * Fixed issue with requring from node
 
@@ -212,8 +215,8 @@ __Version 0.9.4__
 * Fixed issue with auto-removing subscribers after a maximum amount of calls
 
 __Version 0.9.3__
-* Make AMD name match npm package name (`mediator-js`). Used `Mediator.js` 
-  previously.
+* Make AMD name match npm package name `mediator-js`. (Previously used
+  `Mediator.js`.)
 
 __Version 0.9.1__
 * Fixed AMD / `define` syntax
