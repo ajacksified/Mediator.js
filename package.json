@@ -9,7 +9,7 @@
     "test": "mocha",
     "test_with_coverage": "mocha && MEDIATOR_JS_COV=1 mocha -R html-cov > coverage.html"
   },
-  "respository": {
+  "repository": {
     "type": "git",
     "url": "git://github.com/ajacksified/Mediator.js.git"
   },
