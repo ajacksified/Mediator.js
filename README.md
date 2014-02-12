@@ -167,7 +167,7 @@ You can namespace your subscribing / removing / publishing as such:
 ```javascript
 mediator.subscribe("application:chat:receiveMessage", function(data){ ... });
 
-// will call parents of the appllication:chat:receiveMessage namespace
+// will call parents of the application:chat:receiveMessage namespace
 // (that is, next it will call all subscribers of application:chat, and then
 // application). It will not recursively call subchannels - only direct subscribers.
 mediator.publish("application:chat:receiveMessage", "Jack Lawson", "Hey");
