@@ -348,10 +348,11 @@ describe("Mediator", function() {
 
     it("should alias 'off' for channels", function(){
       var spy = sinon.spy(),
-        sub;
+          sub;
 
       sub = mediator.subscribe("test", spy);
       mediator.off("test");
+
       mediator.publish("test");
       expect(spy).not.called;
     });
