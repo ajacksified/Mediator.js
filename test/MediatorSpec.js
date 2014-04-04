@@ -346,6 +346,16 @@ describe("Mediator", function() {
       expect(spy).not.called;
     });
 
+    it("should alias 'off' for channels", function(){
+      var spy = sinon.spy(),
+        sub;
+
+      sub = mediator.subscribe("test", spy);
+      mediator.off("test");
+      mediator.publish("test");
+      expect(spy).not.called;
+    });
+
     it("should call method of context if context has been passed as third argument", function(){
       var context = {
           _privateTestMethod: sinon.spy(),
