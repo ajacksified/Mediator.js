@@ -206,6 +206,9 @@ Changelog
 ---------
 
 __Version 0.9.7__
+* Fixed bug where subscribers that failed predicates were decrementing calls.
+
+__Version 0.9.6__
 * Fixed AMD-style export; export constructor, not instance
 
 __Version 0.9.5__
