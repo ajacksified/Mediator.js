@@ -2,7 +2,7 @@ Mediator.js
 ===========
 [![Build Status](https://travis-ci.org/ajacksified/Mediator.js.png)](https://travis-ci.org/ajacksified/Mediator.js)
 
-Version 0.9.6
+Version 0.9.7
 
 * [View the documentation](http://thejacklawson.com/Mediator.js/)
 * [View the project on Github](https://github.com/ajacksified/Mediator.js)
@@ -205,7 +205,7 @@ mediator.subscribe("application:chat", function(data, channel){
 Changelog
 ---------
 
-__Version 0.9.6__
+__Version 0.9.7__
 * Fixed AMD-style export; export constructor, not instance
 
 __Version 0.9.5__
