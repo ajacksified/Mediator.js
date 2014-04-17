@@ -2,3 +2,5 @@
 .DS_Store
 coverage.html
 node_modules
+Vagrantfile
+.vagrant
