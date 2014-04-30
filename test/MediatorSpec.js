@@ -52,6 +52,20 @@ describe("Mediator", function() {
       expect(spy).calledThrice;
     });
 
+    it("should bind with arbitrary number of calls when predicate matches", function(){
+      var spy = sinon.spy(),
+          spy2 = sinon.spy(),
+          subscriber1 = mediator.subscribe("test", spy, { calls: 3, predicate: function(d){ return (d == 1); } }),
+          subscriber2 = mediator.subscribe("test", spy2, { calls: 3, predicate: function(d){ return (d == 2); } });
+
+      mediator.publish("test", 1);
+      mediator.publish("test", 2);
+
+      expect(spy).calledOnce;
+      expect(subscriber1.options.calls).to.equal(2);
+      expect(subscriber2.options.calls).to.equal(2);
+    });
+
     it("should remove a subscriber in a list of others that's been called its maximum amount of times", function(){
       var spy = sinon.spy(), i;
 
