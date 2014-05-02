@@ -299,5 +299,32 @@ describe("Channel", function() {
       expect(this.a).to.equal("0123");
     });
 
+    it("should  call subscribers and continue running, if one of subscribers throws an exception", function(){
+      var sub1 = function(){
+          this.a += "1";
+        },
+        sub2 = function(){
+          this.a += "2";
+          throw new Error('error');
+          this.a += "444";
+        },
+        sub3 = function(){
+          this.a += "3";
+        },
+        data = ["data"];
+      this.a = "0";
+
+      channel.addSubscriber(sub1, {}, this);
+      channel.addSubscriber(sub2, {}, this);
+      channel.addSubscriber(sub3, {}, this);
+      try {
+        channel.publish(data);
+        this.a += "4";
+      } catch(ex) {
+        this.a += "555";
+      }
+      expect(this.a).to.equal("01234");
+    });
+
   });
 });
