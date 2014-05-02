@@ -141,6 +141,18 @@ var predicate = function(data){ return data.From === "Jack" };
 mediator.subscribe("channel", function(data){ alert(data.Message); }, { predicate: predicate });
 mediator.publish("channel", { Message: "Hey!", From: "Jack" }); //alerts
 mediator.publish("channel", { Message: "Hey!", From: "Audrey" }); //doesn't alert
+
+//You can pass "context" argument as third parameter of if "options" doesn't defined
+var listener = {
+    text: 'Event has been published',
+    onEvent: function() {
+        alert(this.text);
+    }
+}
+mediator.subscribe("channel", listener.onEvent, listener);
+mediator.subscribe("channel", listener.onEvent, {calls: 1}, listener);
+mediator.publish("channel"); //we'll have two alerts
+mediator.publish("channel"); //we'll have an one alert because the second subscriber does have a "calls:1" option
 ```
 
 You can remove events by passing in a channel, or a channel and the

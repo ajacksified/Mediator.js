@@ -370,5 +370,65 @@ describe("Mediator", function() {
       mediator.publish("test");
       expect(spy).not.called;
     });
+
+    it("should call method of context if context has been passed as third argument", function(){
+      var context = {
+          _privateTestMethod: sinon.spy(),
+          test: function() {
+            this._privateTestMethod && this._privateTestMethod();
+          }
+        },
+        sub;
+
+      sub = mediator.subscribe("test", context.test, null, context);
+      mediator.publish("test");
+
+      expect(context._privateTestMethod).called;
+    });
+
+    it("should call method of context if context has been passed as second argument and options has been missed", function(){
+      var context = {
+          _privateTestMethod: sinon.spy(),
+          test: function() {
+            this._privateTestMethod && this._privateTestMethod();
+          }
+        },
+        sub;
+
+      sub = mediator.subscribe("test", context.test, context);
+      mediator.publish("test");
+
+      expect(context._privateTestMethod).called;
+    });
+
+    it("should call method of context if context has been passed as third argument and options has been passed and defined", function(){
+      var context = {
+          _privateTestMethod: sinon.spy(),
+          test: function() {
+            this._privateTestMethod && this._privateTestMethod();
+          }
+        },
+        sub;
+
+      sub = mediator.subscribe("test", context.test, {calls: 1}, context);
+      mediator.publish("test");
+
+      expect(context._privateTestMethod).called;
+    });
+
+    it("should not call method of context if context has been missed", function(){
+      var context = {
+          _privateTestMethod: sinon.spy(),
+          test: function() {
+            this._privateTestMethod && this._privateTestMethod();
+          }
+        },
+        sub;
+
+      sub = mediator.subscribe("test", context.test, {calls: 1});
+      mediator.publish("test");
+
+      expect(context._privateTestMethod).not.called;
+    });
   });
 });
