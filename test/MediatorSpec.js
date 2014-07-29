@@ -167,6 +167,27 @@ describe("Mediator", function() {
       expect(spy).not.called;
     });
 
+    it("should allow subscriber to remove itself", function(){
+      var removerCalled = false;
+      var predicate = function(data){
+        return true;
+        };
+      var remover = function(){
+          removerCalled = true;
+          mediator.remove("test", sub.id);
+        };
+
+      var spy1 = sinon.spy();
+
+      var sub = mediator.subscribe("test", remover, {predicate: predicate});
+      mediator.subscribe("test", spy1);
+      mediator.publish("test");
+
+      expect(removerCalled).to.be.true;
+      expect(spy1).called;
+      expect(mediator.getChannel("test")._subscribers.length).to.equal(1);
+    });
+
     it("should remove subscribers for a given channel / named function pair", function(){
       var spy = sinon.spy(),
           spy2 = sinon.spy();
