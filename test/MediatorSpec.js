@@ -115,7 +115,7 @@ describe("Mediator", function() {
       mediator.publish("test");
 
       expect(spy).called;
-      expect(spy).called;
+      expect(spy2).called;
     });
 
     it("should pass arguments to the given function", function(){
@@ -346,6 +346,20 @@ describe("Mediator", function() {
       expect(spy).not.called;
       expect(spy2).called;
     });
+
+    it("should publish to parents of non-existing namespaces", function(){
+      var spy = sinon.spy(),
+          spy2 = sinon.spy();
+
+      mediator.subscribe("test:test1:test2", spy);
+      mediator.subscribe("test", spy2);
+
+      mediator.publish("test:test1", "data");
+
+      expect(spy).not.called;
+      expect(spy2).called;
+    });
+
   });
 
   describe("aliases", function(){
