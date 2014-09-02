@@ -2,7 +2,7 @@ Mediator.js
 ===========
 [![Build Status](https://travis-ci.org/ajacksified/Mediator.js.png)](https://travis-ci.org/ajacksified/Mediator.js)
 
-Version 0.9.7
+Version 0.9.8
 
 * [View the documentation](http://thejacklawson.com/Mediator.js/)
 * [View the project on Github](https://github.com/ajacksified/Mediator.js)
@@ -204,6 +204,10 @@ mediator.subscribe("application:chat", function(data, channel){
 
 Changelog
 ---------
+
+__Version 0.9.8__
+* Accepted a ton of PRs from [tbusser](https://github.com/tbusser) that fixed
+  some issues and improved performance.
 
 __Version 0.9.7__
 * Fixed bug where subscribers that failed predicates were decrementing calls.
