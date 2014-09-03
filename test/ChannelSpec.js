@@ -184,13 +184,13 @@ describe("Channel", function() {
       var spy = sinon.spy(),
           spy2 = sinon.spy(),
           spy3 = sinon.spy();
-      
+
       channel.addSubscriber(spy);
       var sub2 = channel.addSubscriber(spy2);
       expect(channel._subscribers.length).to.equal(2);
       channel.addSubscriber(spy3);
       expect(channel._subscribers.length).to.equal(3);
-      
+
       channel.removeSubscriber(sub2.id);
       expect(channel._subscribers.length).to.equal(2);
       expect(channel._subscribers[0].fn).to.equal(spy);
@@ -218,6 +218,83 @@ describe("Channel", function() {
 
       channel.removeSubscriber(spy2);
       expect(channel._subscribers.length).to.equal(1);
+    });
+
+    describe("autoCleanChannel", function() {
+      it("should NOT automatically clean channels when the parameter is not specified", function() {
+        var spy = sinon.spy();
+
+        channel.addChannel('sub1');
+
+        var subChannel = channel.returnChannel('sub1'),
+            subscriber = subChannel.addSubscriber(spy);
+
+        subChannel.removeSubscriber(subscriber.id);
+        expect(channel._channels['sub1']).to.not.be.undefined;
+      });
+      it("should NOT automatically clean channels when the parameter is false", function() {
+        var spy = sinon.spy();
+
+        channel.addChannel('sub1');
+
+        var subChannel = channel.returnChannel('sub1'),
+            subscriber = subChannel.addSubscriber(spy);
+
+        subChannel.removeSubscriber(subscriber.id, false);
+        expect(channel._channels['sub1']).to.not.be.undefined;
+      });
+      it("should automatically clean channels when the parameter is true", function() {
+        var spy = sinon.spy();
+
+        channel.addChannel('sub1');
+
+        var subChannel = channel.returnChannel('sub1'),
+            subscriber = subChannel.addSubscriber(spy);
+
+        subChannel.removeSubscriber(subscriber.id, true);
+        expect(channel._channels['sub1']).to.be.undefined;
+      });
+      it("should automatically clean channels and empty parent channels", function() {
+        var spy = sinon.spy();
+
+        channel.addChannel('sub1');
+
+        var subChannel = channel.returnChannel('sub1');
+        subChannel.addChannel('sub2');
+
+        var subChannel2 = subChannel.returnChannel('sub2'),
+            subscriber = subChannel2.addSubscriber(spy);
+
+        subChannel2.removeSubscriber(subscriber.id, true);
+        expect(subChannel._channels['sub2']).to.be.undefined;
+        expect(channel._channels['sub1']).to.be.undefined;
+      });
+      it("should NOT automatically clean channels when there are still other subscribers", function() {
+        var spy = sinon.spy(),
+            spy2 = sinon.spy();
+
+        channel.addChannel('sub1');
+
+        var subChannel = channel.returnChannel('sub1'),
+            subscriber = subChannel.addSubscriber(spy),
+            subscriber2 = subChannel.addSubscriber(spy2);
+
+        subChannel.removeSubscriber(subscriber.id, true);
+        expect(channel._channels['sub1']).to.not.be.undefined;
+      });
+      it("should NOT automatically clean channels when the channel has sub-channels", function() {
+        var spy = sinon.spy();
+
+        channel.addChannel('sub1');
+
+        var subChannel = channel.returnChannel('sub1'),
+            subscriber = subChannel.addSubscriber(spy);
+
+        subChannel.addChannel('sub2');
+        subChannel.removeSubscriber(subscriber.id, true);
+        expect(channel._channels['sub1']).to.not.be.undefined;
+        expect(subChannel._channels['sub2']).to.not.be.undefined;
+      });
     });
   });
 
@@ -268,7 +345,7 @@ describe("Channel", function() {
       expect(spy).calledWith(data[0]);
       expect(spy2).calledWith(data[0]);
     });
-    
+
     it("should call all matching subscribers with context", function(){
       var spy = sinon.spy(),
           data = ["data"];
@@ -278,7 +355,7 @@ describe("Channel", function() {
 
       expect(spy).called;
     });
-    
+
     it("should call subscribers in predefined priority", function(){
       var sub1 = function(){
         this.a += "1";
