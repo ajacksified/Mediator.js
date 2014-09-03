@@ -67,15 +67,14 @@ describe("Channel", function() {
     it("should be able to set top priority", function(){
       var spy = sinon.spy(),
           spy2 = sinon.spy(),
-          spy3 = sinon.spy();
+          spy3 = sinon.spy(),
+          idA = channel.addSubscriber(spy, { priority: 1}).id,
+          idB = channel.addSubscriber(spy2).id,
+          idC = channel.addSubscriber(spy3, { priority: 3 }).id;
 
-      channel.addSubscriber(spy);
-      channel.addSubscriber(spy2);
-      channel.addSubscriber(spy3, { priority: 1 });
-
-      expect(channel._subscribers[0].fn).to.equal(spy);
-      expect(channel._subscribers[1].fn).to.equal(spy3);
-      expect(channel._subscribers[2].fn).to.equal(spy2);
+      expect(channel._subscribers[0].id).to.equal(idC);
+      expect(channel._subscribers[1].id).to.equal(idA);
+      expect(channel._subscribers[2].id).to.equal(idB);
     });
 
     it("should be able to set arbitrary priority", function(){
@@ -87,26 +86,34 @@ describe("Channel", function() {
       channel.addSubscriber(spy2);
       channel.addSubscriber(spy3, { priority: 1 });
 
-      expect(channel._subscribers[0].fn).to.equal(spy);
-      expect(channel._subscribers[1].fn).to.equal(spy3);
+      expect(channel._subscribers[0].fn).to.equal(spy3);
+      expect(channel._subscribers[1].fn).to.equal(spy);
       expect(channel._subscribers[2].fn).to.equal(spy2);
     });
 
     it("should be able to change priority after adding it", function(){
       var spy = sinon.spy(),
           spy2 = sinon.spy(),
-          spy3 = sinon.spy();
+          spy3 = sinon.spy(),
+          idA = channel.addSubscriber(spy, { num: 1 }).id,
+          idB = channel.addSubscriber(spy2, { num: 2 }).id,
+          idC = channel.addSubscriber(spy3, { num: 3 }).id;
 
-      var sub = channel.addSubscriber(spy, { num: 1 });
-      channel.addSubscriber(spy2, { num: 2 });
-      channel.addSubscriber(spy3, { num: 3 });
+      channel.setPriority(idA, 2);
 
-      channel.setPriority(sub.id, 2);
+      expect(channel._subscribers[0].id).to.equal(idA);
+      expect(channel._subscribers[1].id).to.equal(idB);
+      expect(channel._subscribers[2].id).to.equal(idC);
 
-      expect(channel._subscribers[0].fn).to.equal(spy2);
-      expect(channel._subscribers[1].fn).to.equal(spy3);
-      expect(channel._subscribers[2].fn).to.equal(spy);
+    });
+    it("should keep the priorities as initially set (issue #15)", function() {
+      var spy = sinon.spy(),
+          spy2 = sinon.spy(),
+          idA = channel.addSubscriber(spy, {priority: 9}).id,
+          idB = channel.addSubscriber(spy, {priority: 1}).id;
 
+      expect(channel._subscribers[0].id).to.equal(idA);
+      expect(channel._subscribers[1].id).to.equal(idB);
     });
   });
 
@@ -184,13 +191,13 @@ describe("Channel", function() {
       var spy = sinon.spy(),
           spy2 = sinon.spy(),
           spy3 = sinon.spy();
-      
+
       channel.addSubscriber(spy);
       var sub2 = channel.addSubscriber(spy2);
       expect(channel._subscribers.length).to.equal(2);
       channel.addSubscriber(spy3);
       expect(channel._subscribers.length).to.equal(3);
-      
+
       channel.removeSubscriber(sub2.id);
       expect(channel._subscribers.length).to.equal(2);
       expect(channel._subscribers[0].fn).to.equal(spy);
@@ -268,7 +275,7 @@ describe("Channel", function() {
       expect(spy).calledWith(data[0]);
       expect(spy2).calledWith(data[0]);
     });
-    
+
     it("should call all matching subscribers with context", function(){
       var spy = sinon.spy(),
           data = ["data"];
@@ -278,7 +285,7 @@ describe("Channel", function() {
 
       expect(spy).called;
     });
-    
+
     it("should call subscribers in predefined priority", function(){
       var sub1 = function(){
         this.a += "1";
