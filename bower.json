@@ -1,0 +1,21 @@
+{
+  "name": "Mediator.js",
+  "main": "lib/mediator.js",
+  "version": "0.9.9",
+  "homepage": "http://thejacklawson.com/Mediator.js/",
+  "authors": [
+    "Jack Lawson"
+  ],
+  "description": "A light utility class to help implement the Mediator pattern for easy eventing",
+  "keywords": [
+    "mediator"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
