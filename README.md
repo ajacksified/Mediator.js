@@ -2,7 +2,7 @@ Mediator.js
 ===========
 [![Build Status](https://travis-ci.org/ajacksified/Mediator.js.png)](https://travis-ci.org/ajacksified/Mediator.js)
 
-Version 0.10.1
+Version 0.11.0
 
 * [View the documentation](http://thejacklawson.com/Mediator.js/)
 * [View the project on Github](https://github.com/ajacksified/Mediator.js)
@@ -204,6 +204,12 @@ mediator.subscribe("application:chat", function(data, channel){
 
 Changelog
 ---------
+
+__Version 0.11.0__
+* Accepted PRs that:
+  * [Make channel priority more sane](https://github.com/ajacksified/Mediator.js/pull/37)
+  * [Add automatic cleanup of channels](https://github.com/ajacksified/Mediator.js/pull/35)
+  (note - this was changed to opt-out, with the minor version bump.)
 
 __Version 0.10.1__
 * Accepted a PR that fixed some AMD require issues, and allowed upwards-

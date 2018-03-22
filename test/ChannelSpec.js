@@ -228,7 +228,7 @@ describe("Channel", function() {
     });
 
     describe("autoCleanChannel", function() {
-      it("should NOT automatically clean channels when the parameter is not specified", function() {
+      it("should utomatically clean channels when the parameter is not specified", function() {
         var spy = sinon.spy();
 
         channel.addChannel('sub1');
@@ -237,7 +237,7 @@ describe("Channel", function() {
             subscriber = subChannel.addSubscriber(spy);
 
         subChannel.removeSubscriber(subscriber.id);
-        expect(channel._channels['sub1']).to.not.be.undefined;
+        expect(channel._channels['sub1']).to.be.undefined;
       });
       it("should NOT automatically clean channels when the parameter is false", function() {
         var spy = sinon.spy();
