@@ -268,7 +268,7 @@ describe("Mediator", function() {
           sub = mediator.subscribe("test", spy),
           sub2 = mediator.subscribe("test", spy2);
 
-      sub2.update({ options: { priority: 0 } });
+      sub2.update({ options: { priority: 1 } });
 
       expect(mediator.getChannel("test")._subscribers[0].id).to.equal(sub2.id);
       expect(mediator.getChannel("test")._subscribers[1].id).to.equal(sub.id);
