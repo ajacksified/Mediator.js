@@ -2,7 +2,7 @@ Mediator.js
 ===========
 [![Build Status](https://travis-ci.org/ajacksified/Mediator.js.png)](https://travis-ci.org/ajacksified/Mediator.js)
 
-Version 0.9.8
+Version 0.10.1
 
 * [View the documentation](http://thejacklawson.com/Mediator.js/)
 * [View the project on Github](https://github.com/ajacksified/Mediator.js)
@@ -204,6 +204,13 @@ mediator.subscribe("application:chat", function(data, channel){
 
 Changelog
 ---------
+
+__Version 0.10.1__
+* Accepted a PR that fixed some AMD require issues, and allowed upwards-
+  recursing events to fire on events even where the most-specific event
+  is not fired (a listener on "application:chat:message" will fire on an event
+  like "application:chat:message:jack", even if there's no matching listenener
+  on "jack".) https://github.com/ajacksified/Mediator.js/pull/45
 
 __Version 0.9.8__
 * Accepted a ton of PRs from [tbusser](https://github.com/tbusser) that fixed
