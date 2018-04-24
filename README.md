@@ -81,9 +81,12 @@ Subscription signature:
     mediator.publish(channel, <data, data, ... >)
     mediator.remove(channel, <identifier>)
 
-Additionally, `on` and `bind` are aliased to `subscribe`, and `trigger` and
-`emit` are bound to `publish`. `off` is an alias for `remove`. You can use
-`once` to subscribe to an event that should only be fired once.
+Additionally,
+
+* `subscribe`: is alias for `on` and `bind`
+* `publish`: is alias for `trigger` and `emit` 
+* `off`: is an alias for `remove`
+* `once`: can be used to subscribe to an event that should only be fired once.
 
 Subscriber signature:
 
