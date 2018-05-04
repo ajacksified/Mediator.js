@@ -1,7 +1,7 @@
 {
   "name": "Mediator.js",
   "main": "lib/mediator.js",
-  "version": "0.9.9",
+  "version": "0.11.1",
   "homepage": "http://thejacklawson.com/Mediator.js/",
   "authors": [
     "Jack Lawson"

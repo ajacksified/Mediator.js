@@ -2,7 +2,7 @@ Mediator.js
 ===========
 [![Build Status](https://travis-ci.org/ajacksified/Mediator.js.png)](https://travis-ci.org/ajacksified/Mediator.js)
 
-Version 0.11.0
+Version 0.11.1
 
 * [View the documentation](http://thejacklawson.com/Mediator.js/)
 * [View the project on Github](https://github.com/ajacksified/Mediator.js)
@@ -19,8 +19,6 @@ is to make the usage of WebSockets, Ajax calls, DOM events, or any other
 asynchronous operations easy to maintain and test.
 
 Mediator has no dependencies on any other libraries.
-
-*1.12kb, minifed and gzipped*
 
 Why?
 ---
@@ -84,7 +82,7 @@ Subscription signature:
 Additionally,
 
 * `subscribe`: is alias for `on` and `bind`
-* `publish`: is alias for `trigger` and `emit` 
+* `publish`: is alias for `trigger` and `emit`
 * `off`: is an alias for `remove`
 * `once`: can be used to subscribe to an event that should only be fired once.
 
@@ -99,7 +97,7 @@ Mediator.subscribe options (all are optional; default is empty):
 ```javascript
 {
   predicate: function(*args){ ... }
-  priority: 0|1|... 
+  priority: 0|1|...
   calls: 1|2|...
 }
 ```
@@ -158,7 +156,7 @@ mediator.remove("channel");
 mediator.remove("channel", MethodFN);
 ```
 
-You can call the registered functions with the Publish method, which accepts 
+You can call the registered functions with the Publish method, which accepts
 an args array:
 
 ```javascript
@@ -207,6 +205,13 @@ mediator.subscribe("application:chat", function(data, channel){
 
 Changelog
 ---------
+
+__Version 0.11.1__
+* Accepted PRs that:
+  * Attempted to use [StandardJS](https://standardjs.com/) to clean-up the codebase & unit tests.
+  * Removed the old JSCoverage folder: that software was discontinued in 2012.
+  * Cleaned up the unit tests, and migrated them to a mostly ES2015 format.
+  * Minified version is built with [babel-minify](https://github.com/babel/minify), and weighs ~4KB.
 
 __Version 0.11.0__
 * Accepted PRs that:
@@ -295,7 +300,7 @@ at the end of the subcription call.
 
 License
 -------
-This class and its accompanying README and are 
+This class and its accompanying README and are
 [MIT licensed](http://www.opensource.org/licenses/mit-license.php).
 
 In Closing

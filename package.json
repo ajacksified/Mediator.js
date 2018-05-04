@@ -1,13 +1,14 @@
 {
   "name": "mediator-js",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "Flexible event management. Implementation of the mediator pattern.",
   "author": "Jack Lawson <jlawson@olivinelabs.com>",
   "main": "index",
   "readmeFilename": "README.md",
   "scripts": {
     "test": "mocha",
-    "test_with_coverage": "mocha && MEDIATOR_JS_COV=1 mocha -R html-cov > coverage.html"
+    "test_with_coverage": "mocha && MEDIATOR_JS_COV=1 mocha -R html-cov > coverage.html",
+    "build": "minify lib/mediator.js -o mediator.min.js"
   },
   "repository": {
     "type": "git",
@@ -15,11 +16,12 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "babel-minify": "^0.4.1",
     "chai": "^4.1.2",
-    "mocha": "^5.0.4",
-    "sinon": "^4.4.8",
+    "mocha": "^5.1.1",
+    "sinon": "^5.0.3",
     "sinon-chai": "^3.0.0",
-    "sinon-mocha": "0.0.3"
+    "standard": "^11.0.1"
   },
   "licenses": [
     {

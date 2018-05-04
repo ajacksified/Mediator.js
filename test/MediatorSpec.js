@@ -1,409 +1,290 @@
-var Mediator = require("../index").Mediator,
-    sinon = require('sinon'),
-    chai = require('chai'),
-    expect = require('chai').expect,
-    sinonChai = require("sinon-chai");
+const Mediator = require('../index').Mediator
+const mocha = require('mocha')
+const sinon = require('sinon')
+const chai = require('chai').use(require('sinon-chai'))
 
-chai.use(sinonChai);
-require('sinon-mocha').enhance(sinon);
+// Reused variables
+let mediator
+let spy
+let spy2
 
-describe("Mediator", function() {
-  var mediator;
+mocha.describe('Mediator', () => {
+  mocha.beforeEach(() => {
+    mediator = new Mediator()
+    spy = sinon.spy()
+    spy2 = sinon.spy()
+  })
 
-  beforeEach(function() {
-    mediator = new Mediator();
-  });
+  mocha.describe('initializing', () => {
+    mocha.it('should act like a constructor when called like a function', () => chai.expect(Mediator()).not.to.be.undefined)
+    mocha.it('should start with a channel', () => chai.expect(mediator.getChannel('')).not.to.be.undefined)
+  })
 
-  describe("initializing", function(){
-    it("should act like a constructor when called like a function", function(){
-      var fnMediator = Mediator();
-      expect(fnMediator).not.to.be.undefined;
-    });
+  mocha.describe('subscribing', () => {
+    mocha.it('should subscribe to a given channel', () => {
+      mediator.subscribe('test', spy)
+      chai.expect(mediator.getChannel('test')._subscribers.length).to.equal(1)
+    })
 
-    it("should start with a channel", function(){
-      expect(mediator.getChannel('')).not.to.be.undefined;
-    });
-  });
+    mocha.it("should bind 'once'", () => {
+      mediator.once('test', spy)
+      mediator.publish('test')
+      mediator.publish('test')
+      chai.expect(spy).calledOnce
+    })
 
-  describe("subscribing", function(){
-    it("should subscribe to a given channel", function(){
-      var spy = sinon.spy();
-      mediator.subscribe("test", spy);
-      expect(mediator.getChannel("test")._subscribers.length).to.equal(1);
-    });
-
-    it("should bind 'once'", function(){
-      var spy = sinon.spy();
-      mediator.once("test", spy);
-      mediator.publish("test");
-      mediator.publish("test");
-
-      expect(spy).calledOnce;
-    });
-
-    it("should bind with arbitrary number of calls", function(){
-      var spy = sinon.spy(), i;
-      mediator.subscribe("test", spy, { calls: 3 });
-
-      for(i = 0; i < 5; i++){
-        mediator.publish("test");
+    mocha.it('should bind with arbitrary number of calls', () => {
+      mediator.subscribe('test', spy, { calls: 3 })
+      for (let i = 0; i < 5; i++) {
+        mediator.publish('test')
       }
+      chai.expect(spy).calledThrice
+    })
 
-      expect(spy).calledThrice;
-    });
+    mocha.it('should bind with arbitrary number of calls when predicate matches', () => {
+      let subscriber1 = mediator.subscribe('test', spy, { calls: 3, predicate: (d) => (d === 1) })
+      let subscriber2 = mediator.subscribe('test', sinon.spy(), { calls: 3, predicate: (d) => (d === 2) })
+      mediator.publish('test', 1)
+      mediator.publish('test', 2)
+      chai.expect(spy).calledOnce
+      chai.expect(subscriber1.options.calls).to.equal(2)
+      chai.expect(subscriber2.options.calls).to.equal(2)
+    })
 
-    it("should bind with arbitrary number of calls when predicate matches", function(){
-      var spy = sinon.spy(),
-          spy2 = sinon.spy(),
-          subscriber1 = mediator.subscribe("test", spy, { calls: 3, predicate: function(d){ return (d == 1); } }),
-          subscriber2 = mediator.subscribe("test", spy2, { calls: 3, predicate: function(d){ return (d == 2); } });
-
-      mediator.publish("test", 1);
-      mediator.publish("test", 2);
-
-      expect(spy).calledOnce;
-      expect(subscriber1.options.calls).to.equal(2);
-      expect(subscriber2.options.calls).to.equal(2);
-    });
-
-    it("should remove a subscriber in a list of others that's been called its maximum amount of times", function(){
-      var spy = sinon.spy(), i;
-
-      mediator.subscribe("test", function(){});
-      mediator.subscribe("test", spy, { calls: 3 });
-      mediator.subscribe("test", function(){});
-
-      for(i = 0; i < 5; i++){
-        mediator.publish("test");
+    mocha.it("should remove a subscriber in a list of others that's been called its maximum amount of times", () => {
+      mediator.subscribe('test', () => {})
+      mediator.subscribe('test', spy, { calls: 3 })
+      mediator.subscribe('test', () => {})
+      for (let i = 0; i < 5; i++) {
+        mediator.publish('test')
       }
+      chai.expect(spy).calledThrice
+    })
+  })
 
-      expect(spy).calledThrice;
-    });
-  });
+  mocha.describe('publishing', () => {
+    mocha.it('should call a subscriber for a given channel', () => {
+      mediator.subscribe('testX', spy)
+      mediator.publish('testX')
+      chai.expect(spy).called
+    })
 
-  describe("publishing", function(){
-    it("should call a subscriber for a given channel", function(){
-      var spy = sinon.spy();
+    mocha.it('should stop propagation if requested', () => {
+      let subscriber = (c) => { c.stopPropagation(); spy() }
+      let subscriber2 = () => { spy2() }
+      mediator.subscribe('testX', subscriber)
+      mediator.subscribe('testX', subscriber2)
+      mediator.publish('testX')
+      chai.expect(spy).called
+      chai.expect(spy2).not.called
+    })
 
-      mediator.subscribe("testX", spy);
-      mediator.publish("testX");
+    mocha.it('should call subscribers for all functions in a given channel', () => {
+      mediator.subscribe('test', spy)
+      mediator.subscribe('test', spy2)
+      mediator.publish('test')
+      chai.expect(spy).called
+      chai.expect(spy2).called
+    })
 
-      expect(spy).called;
-    });
+    mocha.it('should pass arguments to the given function', () => {
+      let channel = 'test'
+      let arg = 'arg1'
+      let arg2 = 'arg2'
+      mediator.subscribe(channel, spy)
+      mediator.publish(channel, arg, arg2)
+      chai.expect(spy).calledWith(arg, arg2, mediator.getChannel(channel))
+    })
 
-    it("should stop propagation if requested", function(){
-      var spy = sinon.spy(),
-          spy2 = sinon.spy(),
-          subscriber = function(c){ c.stopPropagation(); spy(); },
-          subscriber2 = function(){ spy2(); };
+    mocha.it('should call all matching predicates', () => {
+      let spy3 = sinon.spy()
+      let predicate = (data) => (data.length === 4)
+      let predicate2 = (data) => (data[0] === 'Y')
+      mediator.subscribe('test', spy, { predicate: predicate })
+      mediator.subscribe('test', spy2, { predicate: predicate2 })
+      mediator.subscribe('test', spy3)
+      mediator.publish('test', 'Test')
+      chai.expect(spy).called
+      chai.expect(spy2).not.called
+      chai.expect(spy3).called
+    })
+  })
 
-      mediator.subscribe("testX", subscriber);
-      mediator.subscribe("testX", subscriber2);
-      mediator.publish("testX");
+  mocha.describe('removing', () => {
+    mocha.it('should remove subscribers for a given channel', () => {
+      mediator.subscribe('test', spy)
+      mediator.remove('test')
+      mediator.publish('test')
+      chai.expect(spy).not.called
+    })
 
-      expect(spy).called;
-      expect(spy2).not.called;
-    });
-
-
-    it("should call subscribers for all functions in a given channel", function(){
-      var spy = sinon.spy(),
-          spy2 = sinon.spy();
-
-      mediator.subscribe("test", spy);
-      mediator.subscribe("test", spy2);
-      mediator.publish("test");
-
-      expect(spy).called;
-      expect(spy2).called;
-    });
-
-    it("should pass arguments to the given function", function(){
-      var spy = sinon.spy(),
-          channel = "test",
-          arg = "arg1",
-          arg2 = "arg2";
-
-      mediator.subscribe(channel, spy);
-      mediator.publish(channel, arg, arg2);
-
-      expect(spy).calledWith(arg, arg2, mediator.getChannel(channel));
-    });
-
-    it("should call all matching predicates", function(){
-      var spy = sinon.spy(),
-          spy2 = sinon.spy(),
-          spy3 = sinon.spy();
-
-      var predicate = function(data){
-        return data.length === 4;
+    mocha.it('should allow subscriber to remove itself', () => {
+      let removerCalled = false
+      let predicate = (data) => true
+      let remover = () => {
+        removerCalled = true
+        mediator.remove('test', sub.id)
       }
+      let sub = mediator.subscribe('test', remover, {predicate: predicate})
+      mediator.subscribe('test', spy)
+      mediator.publish('test')
+      chai.expect(removerCalled).to.be.true
+      chai.expect(spy).called
+      chai.expect(mediator.getChannel('test')._subscribers.length).to.equal(1)
+    })
 
-      var predicate2 = function(data){
-        return data[0] == "Y";
+    mocha.it('should remove subscribers for a given channel / named function pair', () => {
+      mediator.subscribe('test', spy)
+      mediator.subscribe('test', spy2)
+      mediator.remove('test', spy)
+      mediator.publish('test')
+      chai.expect(spy).not.called
+      chai.expect(spy2).called
+    })
+
+    mocha.it("should remove subscribers by calling from subscriber's callback", () => {
+      let catched = false
+      mediator.subscribe('test', () => {
+        mediator.remove('test')
+      })
+      mediator.subscribe('test', spy)
+      mediator.subscribe('test', spy2)
+      try {
+        mediator.publish('test')
+      } catch (e) {
+        catched = true
       }
+      chai.expect(catched).to.be.false
+      chai.expect(spy).not.called
+      chai.expect(spy2).not.called
+    })
 
-      mediator.subscribe("test", spy, { predicate: predicate });
-      mediator.subscribe("test", spy2, { predicate: predicate2 });
-      mediator.subscribe("test", spy3);
-
-      mediator.publish("test", "Test");
-
-      expect(spy).called;
-      expect(spy2).not.called;
-      expect(spy3).called;
-    });
-
-  });
-
-  describe("removing", function(){
-    it("should remove subscribers for a given channel", function(){
-      var spy = sinon.spy();
-
-      mediator.subscribe("test", spy);
-      mediator.remove("test");
-      mediator.publish("test");
-
-      expect(spy).not.called;
-    });
-
-    it("should allow subscriber to remove itself", function(){
-      var removerCalled = false;
-      var predicate = function(data){
-        return true;
-        };
-      var remover = function(){
-          removerCalled = true;
-          mediator.remove("test", sub.id);
-        };
-
-      var spy1 = sinon.spy();
-
-      var sub = mediator.subscribe("test", remover, {predicate: predicate});
-      mediator.subscribe("test", spy1);
-      mediator.publish("test");
-
-      expect(removerCalled).to.be.true;
-      expect(spy1).called;
-      expect(mediator.getChannel("test")._subscribers.length).to.equal(1);
-    });
-
-    it("should remove subscribers for a given channel / named function pair", function(){
-      var spy = sinon.spy(),
-          spy2 = sinon.spy();
-
-      mediator.subscribe("test", spy);
-      mediator.subscribe("test", spy2);
-      mediator.remove("test", spy);
-      mediator.publish("test");
-
-      expect(spy).not.called;
-      expect(spy2).called;
-    });    
-
-    it("should remove subscribers by calling from subscriber's callback", function(){
-      var spy = sinon.spy(),
-          spy2 = sinon.spy(),
-          catched = false;
-      mediator.subscribe("test", function(){
-        mediator.remove("test");
-      });
-      mediator.subscribe("test", spy);
-      mediator.subscribe("test", spy2);
-      try{
-        mediator.publish("test");
+    mocha.it('should remove subscriber by calling from its callback', () => {
+      let remover = () => {
+        mediator.remove('test', sub.id)
       }
-      catch (e){
-        catched = true;
+      let catched = false
+      let sub = mediator.subscribe('test', remover)
+      mediator.subscribe('test', spy)
+      mediator.subscribe('test', spy2)
+      try {
+        mediator.publish('test')
+      } catch (e) {
+        catched = true
       }
-      expect(catched).to.be.false;
-      expect(spy).not.called;
-      expect(spy2).not.called;
-    });
+      chai.expect(catched).to.be.false
+      chai.expect(spy).to.called
+      chai.expect(spy2).to.called
+      remover = sinon.spy(remover)
+      mediator.publish('test')
+      chai.expect(remover).not.to.called
+      chai.expect(spy).to.called
+      chai.expect(spy2).to.called
+    })
+  })
 
-    it("should remove subscriber by calling from its callback", function(){
-      var remover = function(){
-          mediator.remove("test", sub.id);
-        };
-      var spy = sinon.spy(),
-          spy2 = sinon.spy(),
-          catched = false,
-          self = this;
-      var sub = mediator.subscribe("test", remover);
-      mediator.subscribe("test", spy);
-      mediator.subscribe("test", spy2);
-      try{
-        mediator.publish("test");
-      }
-      catch (e){
-        catched = true;
-      }
-      expect(catched).to.be.false;
-      expect(spy).to.called;
-      expect(spy2).to.called;
-      var remover = sinon.spy(remover);
-      mediator.publish("test");
-      expect(remover).not.to.called;
-      expect(spy).to.called;
-      expect(spy2).to.called;  
-    });
-  });
+  mocha.describe('updating', () => {
+    mocha.it('should update subscriber by identifier', () => {
+      let newPredicate = (data) => data
+      let sub = mediator.subscribe('test', spy)
+      let subId = sub.id
+      let subThatIReallyGotLater = mediator.getSubscriber(subId, 'test')
+      subThatIReallyGotLater.update({ options: { predicate: newPredicate } })
+      chai.expect(subThatIReallyGotLater.options.predicate).to.equal(newPredicate)
+    })
 
-  describe("updating", function(){
-    it("should update subscriber by identifier", function(){
-      var spy = sinon.spy(),
-          newPredicate = function(data){ return data; };
+    mocha.it('should update subscriber priority by identifier', () => {
+      let sub = mediator.subscribe('test', spy)
+      let sub2 = mediator.subscribe('test', spy2)
+      sub2.update({ options: { priority: 1 } })
+      chai.expect(mediator.getChannel('test')._subscribers[0].id).to.equal(sub2.id)
+      chai.expect(mediator.getChannel('test')._subscribers[1].id).to.equal(sub.id)
+    })
 
-      var sub = mediator.subscribe("test", spy),
-          subId = sub.id;
+    mocha.it('should update subscriber by fn', () => {
+      // TODO: FIXME, or investigate the main library
+      let newPredicate = (data) => data
+      let subThatIReallyGotLater = mediator.getSubscriber(spy, 'test')
+      subThatIReallyGotLater.update({ options: { predicate: newPredicate } })
+      chai.expect(subThatIReallyGotLater.options.predicate).to.equal(newPredicate)
+    })
+  })
 
-      var subThatIReallyGotLater = mediator.getSubscriber(subId, "test");
-      subThatIReallyGotLater.update({ options: { predicate: newPredicate } });
-      expect(subThatIReallyGotLater.options.predicate).to.equal(newPredicate);
-    });
+  mocha.describe('namespaces', () => {
+    mocha.it('should make subchannels', () => {
+      mediator.subscribe('test:subchannel', spy)
+      chai.expect(mediator.getChannel('test')._channels['subchannel']._subscribers.length).to.equal(1)
+    })
 
-    it("should update subscriber priority by identifier", function(){
-      var spy = sinon.spy(),
-          spy2 = sinon.spy(),
-          sub = mediator.subscribe("test", spy),
-          sub2 = mediator.subscribe("test", spy2);
+    mocha.it('should call all functions within a given channel namespace', () => {
+      mediator.subscribe('test:channel', spy)
+      mediator.subscribe('test', spy2)
+      mediator.publish('test:channel')
+      chai.expect(spy).called
+      chai.expect(spy2).called
+    })
 
-      sub2.update({ options: { priority: 1 } });
+    mocha.it('should call only functions within a given channel namespace', () => {
+      mediator.subscribe('test', spy)
+      mediator.subscribe('derp', spy2)
+      mediator.publish('test')
+      chai.expect(spy).called
+      chai.expect(spy2).not.called
+    })
 
-      expect(mediator.getChannel("test")._subscribers[0].id).to.equal(sub2.id);
-      expect(mediator.getChannel("test")._subscribers[1].id).to.equal(sub.id);
-    });
+    mocha.it('should remove functions within a given channel namespace', () => {
+      mediator.subscribe('test:test1', spy)
+      mediator.subscribe('test', spy2)
+      mediator.remove('test:test1')
+      mediator.publish('test:test1')
+      chai.expect(spy).not.called
+      chai.expect(spy2).called
+    })
 
-    it("should update subscriber by fn", function(){
-      var spy = sinon.spy(),
-          newPredicate = function(data){ return data; };
+    mocha.it('should publish to specific namespaces', () => {
+      mediator.subscribe('test:test1:test2', spy)
+      mediator.subscribe('test', spy2)
+      mediator.publish('test:test1', 'data')
+      chai.expect(spy).not.called
+      chai.expect(spy2).called
+    })
 
-      var sub = mediator.subscribe("test", spy);
+    mocha.it('should publish to parents of non-existing namespaces', () => {
+      mediator.subscribe('test:test1:test2', spy)
+      mediator.subscribe('test', spy2)
+      mediator.publish('test:test1', 'data')
+      chai.expect(spy).not.called
+      chai.expect(spy2).called
+    })
+  })
 
-      var subThatIReallyGotLater = mediator.getSubscriber(spy, "test");
-      subThatIReallyGotLater.update({ options: { predicate: newPredicate } });
-      expect(subThatIReallyGotLater.options.predicate).to.equal(newPredicate);
-    });
-  });
+  mocha.describe('aliases', () => {
+    mocha.it("should alias 'on' and 'bind'", () => {
+      mediator.on('test', spy)
+      mediator.bind('test', spy)
+      mediator.publish('test')
+      chai.expect(spy).calledTwice
+    })
 
-  describe("namespaces", function(){
-    it("should make subchannels", function(){
-      var spy = sinon.spy();
-      mediator.subscribe("test:subchannel", spy);
-      expect(mediator.getChannel("test")._channels["subchannel"]._subscribers.length).to.equal(1);
-    });
+    mocha.it("should alias 'emit' and 'trigger'", () => {
+      mediator.subscribe('test', spy)
+      mediator.emit('test')
+      mediator.trigger('test')
+      chai.expect(spy).calledTwice
+    })
 
-    it("should call all functions within a given channel namespace", function(){
-      var spy = sinon.spy();
-      var spy2 = sinon.spy();
+    mocha.it("should alias 'off' for subscriptions", () => {
+      let sub = mediator.subscribe('test', spy)
+      mediator.off('test', sub.id)
+      mediator.publish('test')
+      chai.expect(spy).not.called
+    })
 
-      mediator.subscribe("test:channel", spy);
-      mediator.subscribe("test", spy2);
-
-      mediator.publish("test:channel");
-
-      expect(spy).called;
-      expect(spy2).called;
-    });
-
-    it("should call only functions within a given channel namespace", function(){
-      var spy = sinon.spy();
-      var spy2 = sinon.spy();
-
-      mediator.subscribe("test", spy);
-      mediator.subscribe("derp", spy2);
-
-      mediator.publish("test");
-
-      expect(spy).called;
-      expect(spy2).not.called;
-    });
-
-    it("should remove functions within a given channel namespace", function(){
-      var spy = sinon.spy(),
-          spy2 = sinon.spy();
-
-      mediator.subscribe("test:test1", spy);
-      mediator.subscribe("test", spy2);
-
-      mediator.remove("test:test1");
-
-      mediator.publish("test:test1");
-
-      expect(spy).not.called;
-      expect(spy2).called;
-    });
-
-    it("should publish to specific namespaces", function(){
-      var spy = sinon.spy(),
-          spy2 = sinon.spy();
-
-      mediator.subscribe("test:test1:test2", spy);
-      mediator.subscribe("test", spy2);
-
-      mediator.publish("test:test1", "data");
-
-      expect(spy).not.called;
-      expect(spy2).called;
-    });
-
-    it("should publish to parents of non-existing namespaces", function(){
-      var spy = sinon.spy(),
-          spy2 = sinon.spy();
-
-      mediator.subscribe("test:test1:test2", spy);
-      mediator.subscribe("test", spy2);
-
-      mediator.publish("test:test1", "data");
-
-      expect(spy).not.called;
-      expect(spy2).called;
-    });
-
-  });
-
-  describe("aliases", function(){
-    it("should alias 'on' and 'bind'", function(){
-      var spy = sinon.spy();
-
-      mediator.on("test", spy);
-      mediator.bind("test", spy);
-      mediator.publish("test");
-
-      expect(spy).calledTwice;
-    });
-
-    it("should alias 'emit' and 'trigger'", function(){
-      var spy = sinon.spy();
-
-      mediator.subscribe("test", spy);
-
-      mediator.emit("test");
-      mediator.trigger("test");
-
-      expect(spy).calledTwice;
-    });
-
-    it("should alias 'off' for subscriptions", function(){
-      var spy = sinon.spy(),
-          sub;
-
-      sub = mediator.subscribe("test", spy);
-      mediator.off("test", sub.id);
-
-      mediator.publish("test");
-      expect(spy).not.called;
-    });
-
-    it("should alias 'off' for channels", function(){
-      var spy = sinon.spy(),
-          sub;
-
-      sub = mediator.subscribe("test", spy);
-      mediator.off("test");
-
-      mediator.publish("test");
-      expect(spy).not.called;
-    });
-  });
-});
+    mocha.it("should alias 'off' for channels", () => {
+      mediator.subscribe('test', spy)
+      mediator.off('test')
+      mediator.publish('test')
+      chai.expect(spy).not.called
+    })
+  })
+})
