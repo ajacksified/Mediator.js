@@ -8,7 +8,7 @@
   "scripts": {
     "test": "mocha",
     "test_with_coverage": "mocha && MEDIATOR_JS_COV=1 mocha -R html-cov > coverage.html",
-    "build": "minify lib/mediator.js -o mediator.min.js"
+    "build": "minify lib/mediator.js -o mediator.min.js --flipComparisons --keepFnName --tdz"
   },
   "repository": {
     "type": "git",
@@ -18,10 +18,14 @@
   "devDependencies": {
     "babel-minify": "^0.4.1",
     "chai": "^4.1.2",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.7.0",
+    "eslint-plugin-standard": "^3.1.0",
     "mocha": "^5.1.1",
     "sinon": "^5.0.3",
-    "sinon-chai": "^3.0.0",
-    "standard": "^11.0.1"
+    "sinon-chai": "^3.0.0"
   },
   "licenses": [
     {
@@ -30,7 +34,7 @@
     }
   ],
   "engines": {
-    "node": ">=0.6.0"
+    "node": ">=6.0.0"
   },
   "keywords": [
     "pubsub",
