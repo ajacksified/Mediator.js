@@ -19,7 +19,7 @@ mocha.describe('Mediator', () => {
 
   mocha.describe('updating', () => {
     mocha.it('should update the fn', () => {
-      let newFN = data => data;
+      let newFN = (data) => data;
       sub.update({ fn: newFN });
       chai.expect(sub.fn).to.equal(newFN);
     });

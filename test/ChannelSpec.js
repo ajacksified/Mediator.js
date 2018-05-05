@@ -245,8 +245,7 @@ mocha.describe('Channel', () => {
 
     mocha.it('should call all matching subscribers with context', () => {
       let data = ['data'];
-      // TODO: fails test if ES2015 version is applied
-      // channel.addSubscriber(() => { this() }, {}, spy)
+      // Revisit later with ES2015+
       channel.addSubscriber(function () { this(); }, {}, spy);
       channel.publish(data);
       chai.expect(spy).called;
@@ -266,30 +265,30 @@ mocha.describe('Channel', () => {
 
     mocha.it('should call all matching subscribers with context', () => {
       let data = ['data'];
-      // TODO: fails test if ES2015 version is applied
-      // channel.addSubscriber(() => { this() }, {}, spy)
+      // Revisit later with ES2015+
       channel.addSubscriber(function () { this(); }, {}, spy);
       channel.publish(data);
       chai.expect(spy).called;
     });
 
     mocha.it('should call subscribers in predefined priority', () => {
+      let a
       let sub1 = () => {
-        this.a += '1';
+        a += '1';
       };
       let sub2 = () => {
-        this.a += '2';
+        a += '2';
       };
       let sub3 = () => {
-        this.a += '3';
+        a += '3';
       };
       let data = ['data'];
-      this.a = '0';
+      a = '0';
       channel.addSubscriber(sub3, {}, this);
       channel.addSubscriber(sub1, { priority: 2 }, this);
       channel.addSubscriber(sub2, { priority: 1 }, this);
       channel.publish(data);
-      chai.expect(this.a).to.equal('0123');
+      chai.expect(a).to.equal('0123');
     });
   });
 });
