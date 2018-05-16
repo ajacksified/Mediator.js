@@ -208,10 +208,9 @@ Changelog
 
 __Version 0.11.1__
 * Accepted PRs that:
-  * Attempted to use [StandardJS](https://standardjs.com/) to clean-up the codebase & unit tests.
+  * Attempted to use [StandardJS](https://standardjs.com/) and [ESLint](https://eslint.org/) to clean-up the codebase & unit tests. Code is now mostly ES2015+ compliant; Mocha (still) discourages use of lambda functions in its tests.
   * Removed the old JSCoverage folder: that software was discontinued in 2012.
-  * Cleaned up the unit tests, and migrated them to a mostly ES2015 format.
-  * Minified version is built with [babel-minify](https://github.com/babel/minify), and weighs ~4KB.
+  * Minified versions are built with [babel-minify](https://github.com/babel/minify) & [Bread Compressor](https://github.com/ralscha/bread-compressor-cli).
 
 __Version 0.11.0__
 * Accepted PRs that:

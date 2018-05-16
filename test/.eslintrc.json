@@ -25,6 +25,7 @@
             "error",
             "always"
         ],
-        "prefer-arrow-callback": "off"
+        "prefer-arrow-callback": "off",
+        "eqeqeq": "off"
     }
 }

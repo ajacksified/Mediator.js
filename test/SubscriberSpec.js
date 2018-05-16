@@ -1,38 +1,39 @@
-const Mediator = require('../index').Mediator;
+'use strict';
+const Mediator = require('../mediator.min').Mediator;
 const mocha = require('mocha');
 const chai = require('chai').use(require('sinon-chai'));
 
 // Reused variables
 let sub;
-let originalOptions = {};
-let originalContext = {};
-let originalFN = () => {};
+const originalOptions = {};
+const originalContext = {};
+const originalFN = function () {};
 
-mocha.describe('Mediator', () => {
-  mocha.beforeEach(() => {
+mocha.describe('Mediator', function () {
+  mocha.beforeEach(function () {
     sub = new Mediator.Subscriber(originalFN, originalOptions, originalContext);
   });
 
-  mocha.describe('initializing', () => {
-    mocha.it('should act like a constructor when called like a function', () => chai.expect(Mediator.Subscriber('name')).not.to.be.undefined);
+  mocha.describe('initializing', function () {
+    mocha.it('should act like a constructor when called like a function', function () { chai.expect(Mediator()).not.to.be.undefined; });
   });
 
-  mocha.describe('updating', () => {
-    mocha.it('should update the fn', () => {
-      let newFN = (data) => data;
+  mocha.describe('updating', function () {
+    mocha.it('should update the fn', function () {
+      const newFN = function (data) { data; };
       sub.update({ fn: newFN });
       chai.expect(sub.fn).to.equal(newFN);
     });
 
-    mocha.it('should update the options (predicate)', () => {
-      let newPredicate = (data) => (data === true);
-      let newOptions = { predicate: newPredicate };
+    mocha.it('should update the options (predicate)', function () {
+      const newPredicate = (data) => { (data == true); };
+      const newOptions = { predicate: newPredicate };
       sub.update({ options: newOptions });
       chai.expect(sub.options.predicate).to.equal(newPredicate);
     });
 
-    mocha.it('should update the context', () => {
-      let newContext = { derp: 'herp' };
+    mocha.it('should update the context', function () {
+      const newContext = { derp: 'herp' };
       sub.update({ context: newContext });
       chai.expect(sub.context).to.equal(newContext);
     });

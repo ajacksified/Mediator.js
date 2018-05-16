@@ -3,12 +3,14 @@
   "version": "0.11.1",
   "description": "Flexible event management. Implementation of the mediator pattern.",
   "author": "Jack Lawson <jlawson@olivinelabs.com>",
+  "license": "MIT License",
   "main": "index",
   "readmeFilename": "README.md",
   "scripts": {
-    "test": "mocha",
-    "test_with_coverage": "mocha && MEDIATOR_JS_COV=1 mocha -R html-cov > coverage.html",
-    "build": "minify lib/mediator.js -o mediator.min.js --flipComparisons --keepFnName --tdz"
+    "test": "mocha --reporter mochawesome",
+    "compress": "bread-compressor mediator.min.js",
+    "pretest": "npm run build",
+    "build": "npm install && minify lib/mediator.js -o mediator.min.js --flipComparisons --keepFnName --tdz && npm run compress"
   },
   "repository": {
     "type": "git",
@@ -16,15 +18,19 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "babel-minify": "^0.4.1",
+    "babel-minify": "^0.4.3",
+    "bread-compressor-cli": "^1.0.0",
     "chai": "^4.1.2",
+    "eslint": "^4.19.1",
+    "eslint-config-problems": "^0.1.1",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-standard": "^3.1.0",
     "mocha": "^5.1.1",
-    "sinon": "^5.0.3",
+    "mochawesome": "^3.0.2",
+    "sinon": "^5.0.7",
     "sinon-chai": "^3.0.0"
   },
   "licenses": [

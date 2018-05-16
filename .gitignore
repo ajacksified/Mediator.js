@@ -4,3 +4,4 @@ coverage.html
 node_modules
 Vagrantfile
 .vagrant
+mochawesome-report/**

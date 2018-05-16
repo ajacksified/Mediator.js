@@ -7,9 +7,10 @@ node_js:
 before_install:
   - rm mediator.min.js
   - rm mediator.min.js.gz
+  - rm mediator.min.js.br
 
 build:
   - npm run build
 
 after_success:
-  - gzip mediator.min.js
+
